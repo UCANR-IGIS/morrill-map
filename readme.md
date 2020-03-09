@@ -22,15 +22,17 @@ signed the act on July 2, 1862.
 ## Incentivizing States
 
 But how exactly do you support States, at various forms of development,
-in creating new colleges? The federal government didn’t have much spare
-cash at the time, and everything they had was going to the war. What
-they did have however was land, a lot of it, particularly in the large
-western states like California where Native Americans had been displaced
-and decimated by decades of violence, disease, and fraud. The Federal
-government was eager to ‘dispose’ of public lands and get it into the
-hands of settlers and coorporations who could put it into production.
-Land Grants were quite common in those days, perhaps the famous being
-the Homestead Act which was passed just 9 days before the Morrill Act.
+in creating new colleges?
+
+The federal government didn’t have much spare cash at the time, and
+everything they had was going to the war. What they did have however was
+land, a lot of it, particularly in the large western states like
+California where Native Americans had been displaced and decimated by
+decades of violence, disease, and fraud. The Federal government was
+eager to ‘dispose’ of public lands and get it into the hands of settlers
+and coorporations who could put it into production. Land Grants were
+quite common in those days, perhaps the famous being the Homestead Act
+which was passed just two months before the Morrill Act.
 
 Under the Morrill Act, each State was given 30,000 acres for each
 Congressman and Senator. The idea was not that the State would build a
@@ -51,23 +53,11 @@ back east.
 
 Hence the name ‘land grant’ institutions.
 
-# The Morrill Map
+# The Morrill Act Map
 
-Mapping the lands given away under the Morrill Act paints of picture of
-the foundation of the land grant system in the US, but it also reveals a
-number of other things. Since the vast majority of land allocated under
-the act was sold for cash, the distribution reveals where land was both
-accessible as well as valued for its agricultural potenial. The timing
-of land grants reveals a number of historical processes, including waves
-of settler migration, the progress of government surveyors, political
-events which shaped when land scrip came on the market, the ebbs and
-flows of the land market, and efforts to put the brakes on the biggest
-land speculators. When seen in the broader arc of time, the map also
-reveals one piece of the chain by which land and resources used and
-managed by Native Americans for centuries was taken by force and
-repurposed for the private and collective benefit of Euro-Americans.
+<http://arcg.is/0Sja0L>
 
-# How the Map Was Made
+**How the Map Was Made**
 
 This map is derived from the orginal patent records (a patent is like
 the original title deed for a piece of land) that were issued by the US
@@ -82,3 +72,19 @@ map.
   - For various reasons related mostly to the paper records and very old
     surveying techniques, a small number of patents are not on the map.
   - This map should be taken as a preliminary
+
+# Discussion
+
+Mapping the lands given away under the Morrill Act paints of picture of
+the foundation of the land grant system in the US, but it also reveals a
+number of other things. Since the vast majority of land allocated under
+the act was sold for cash, the distribution reveals where land was both
+accessible as well as valued for its agricultural potenial. The timing
+of land grants reveals a number of historical processes, including waves
+of settler migration, the progress of government surveyors, political
+events which shaped when land scrip came on the market, the ebbs and
+flows of the land market, and efforts to put the brakes on the biggest
+land speculators. When seen in the broader arc of time, the map also
+reveals one piece of the chain by which land and resources used and
+managed by Native Americans for centuries was taken by force and
+repurposed for the private and collective benefit of Euro-Americans.

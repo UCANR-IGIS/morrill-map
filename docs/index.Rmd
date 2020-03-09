@@ -1,11 +1,26 @@
 ---
 title: "Mapping the Morrill Act"
-output: github_document
+author: "Andy Lyons"
+output:
+  html_document:
+    smart: yes                ## don't use smart quotes
+    toc: no                 ## create a TOC pane
+    self_contained: no
+    lib_dir: lib
 ---
 
-## The Origin of Public Universities in the US
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-Did you ever wonder how the big public universities in the US like the University of Michican of University of California got started? Many of the big state schools got started with the help from the [1862 Morrill Act](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts).
+# The "Land Grant" Network of Public Universities in the USA
+
+Did you ever wonder how the big public universities in the US like the University of Michican, or the University of California got started? Many of the big state schools got started with the help from the [1862 Morrill Act](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts) which started the "Land Grant University" system.
+
+<p style="margin:2em 0; text-align:center;"><img src="images/usda-land-grant-colleges-map-2019-03-18_800x540.png" style="width:600px; height:405px;"/><br><span style="font-style:italic;">Land Grant Universities and Colleges. Source: <a href="https://nifa.usda.gov/resource/land-grant-colleges-and-universities-map
+">USDA</a></span></p>
+
+# Background
 
 During the middle of the Civil War, this act provided support for the States to establish colleges for "agriculture and the mechanical arts (engineering)". At the time, the country needed a lot more engineers for big infrastructure projects like the railroads and industrialization, and training for the large number of farmers. Universities of the day were few, expensive and focused on the liberal arts. Senator Samuel Morrill had been trying for several years to incentivize the States to establish more applied colleges, and with the southern States temporarily out of the Union, he had enough votes. Abraham Lincoln signed the act on July 2, 1862.
 
@@ -23,7 +38,7 @@ Hence the name 'land grant' institutions.
 
 http://arcg.is/0Sja0L 
 
-**How the Map Was Made**
+## How the Map Was Made
 
 This map is derived from the orginal patent records (a patent is like the original title deed for a piece of land) that were issued by the US Government Land Office (now the BLM). These documents have been digitized by the BLM and connected to property boundaries in a GIS format. The BLM share these data on their website, and a R script was used to download patents issused under the Morrill Act, and make the map.
 
@@ -31,10 +46,9 @@ This map is derived from the orginal patent records (a patent is like the origin
 - For various reasons related mostly to the paper records and very old surveying techniques, a small number of patents are not on the map. 
 - This map should be taken as a preliminary
 
-# Discussion
 
-Mapping the lands given away under the Morrill Act paints of picture of the foundation of the land grant system in the US, but it also reveals a number of other things. Since the vast majority of land allocated under the act was sold for cash, the distribution reveals where land was both accessible as well as valued for its agricultural potenial. The timing of land grants reveals a number of historical processes, including waves of settler migration, the progress of government surveyors, political events which shaped when land scrip came on the market, the ebbs and flows of the land market, and efforts to put the brakes on the biggest land speculators. When seen in the broader arc of time, the map also reveals one piece of the chain by which land and resources used and managed by Native Americans for centuries was taken by force and repurposed for the private and collective benefit of Euro-Americans.
 
- 
- 
- 
+# About The Project
+
+
+
