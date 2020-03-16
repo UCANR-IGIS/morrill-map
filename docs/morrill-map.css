@@ -1,0 +1,19 @@
+.title {
+  color: #70380f;
+  font-family: 'Palatino Linotype', Palatino, serif;
+  font-weight: bold;
+  font-size: 38px;
+  text-align: center;
+}
+h1 {
+  font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  color: 404040;
+  font-weight: bold;
+  font-size: 24px;
+}
+h2 {
+  font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
+  color: 202020;
+  font-weight: bold;
+  font-size: 18px;
+}

@@ -1,7 +1,7 @@
 Mapping the Morrill Act
 ================
 
-## Launching Public Universities in the US
+## The Origin of Public Universities in the US
 
 Did you ever wonder how the big public universities in the US like the
 University of Michican of University of California got started? Many of

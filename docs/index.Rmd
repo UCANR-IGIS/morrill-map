@@ -1,64 +1,94 @@
 ---
 title: "Mapping the Morrill Act"
-author: "Andy Lyons"
 output:
-  html_document:
-    smart: yes                ## don't use smart quotes
-    toc: no                 ## create a TOC pane
-    self_contained: no
+  html_document: 
+    css: morrill-map.css
     lib_dir: lib
+    self_contained: no
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(DT)
+library(dplyr)
 ```
 
-# "Land Grant" Universities in the USA
+<div style="width:440px; margin:2em auto;"><img src="images/vintage-decorative-divider.svg" style="width:430px;" /></div>
+
+
+# I. The Origins of US "Land Grant" Universities
+
+<div style="float:right; border:2px solid lightgray; padding:5px; margin-left:20px;"><img src="images/usda-land-grant-colleges-map-2019-03-18_800x540.png" style="width:300px; height:202px;"/><br><span style="font-style:italic;">Land Grant Universities and Colleges. Source: <a href="https://nifa.usda.gov/resource/land-grant-colleges-and-universities-map
+">USDA</a></span></div>
 
 Did you ever wonder how the big public universities across the USA (e.g., University of Michigan, University of California) got started? Many of the big state schools got started with the help from the [1862 Morrill Act](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts) which started the "Land Grant University" system.
 
-<p style="margin:2em 0; text-align:center;"><img src="images/usda-land-grant-colleges-map-2019-03-18_800x540.png" style="width:600px; height:405px;"/><br><span style="font-style:italic;">Land Grant Universities and Colleges. Source: <a href="https://nifa.usda.gov/resource/land-grant-colleges-and-universities-map
-">USDA</a></span></p>
-
-The Morrill Act was signed into law by Abraham Lincoln in July 1862, during the middle of the Civil War. This visionary act provided support and incentives for the States to establish colleges for "agriculture and the mechanical arts (engineering)". At the time, the country needed engineers for big infrastructure projects like the railroads and factories. Most of the population was also still in farming, for which there was little research or training. The few Universities in those days were expensive and focused on the liberal arts and business. Senator Samuel Morrill had been trying for several years to incentivize the States to establish more applied colleges, and with the southern States temporarily out of the Union, he had enough votes.
+The Morrill Act was signed into law by Abraham Lincoln in July 1862, during the middle of the Civil War. This visionary act provided support and incentives for the States to establish colleges for "*agriculture and the mechanical arts*" (i.e., engineering). At the time, the country needed engineers for big infrastructure projects like the railroads and factories. Most of the population was also still in farming, for which there was little research or training. The few Universities in those days were expensive and focused on the liberal arts and business. Senator Samuel Morrill had been trying for several years to incentivize the States to establish more applied colleges, and with the southern States temporarily out of the Union, he had enough votes.
 
 <div style="width:500px; margin:2em auto;">
 <div style="text-align:center; display:inline-block; margin-right:10px;"><img src="images/lincoln_230x300.jpg" style="width:230px; height:300px;"/><br/>Abraham Lincoln</div>
 <div style="text-align:center; display:inline-block;"><img src="images/justin-smith-morrill_230x300.jpg" style="width:230px; height:300px;"/><br/>Senator Justin Morrill</div>
 </div>
 
-
-## Incentivizing States to Build Colleges
+# II. Incentivizing States to Build Colleges for Agriculture and the Mechanical Arts
 
 But how exactly do you support 48 States, all at various stages of development, to establish new colleges?
 
-The federal government didn't have much spare cash at the time, and everything they had was going to the war. But what they did have however was land, a lot of it, particularly in the large western states like California where Native American tribes had been decimated and displaced. The Federal government was eager to 'dispose' of public lands across the country and get it into the hands of settlers and companies who could put it into production. Legislation involving Land Grants was therefore quite common in those days, perhaps the famous being the Homestead Act which was passed just two months before the Morrill Act.
+The federal government didn't have much spare cash at the time, and everything they had was going to the war. But what they did have however was land, a lot of it, particularly in the large western states like California where Native American tribes had been widely displaced and populations decimated by disease and violence. The Federal government was eager to 'dispose' of public lands across the country and get it into the hands of settlers and companies who could put it into production and commerce. Legislation involving Land Grants was therefore quite common in those days, perhaps the famous being the [Homestead Act](https://en.wikipedia.org/wiki/Homestead_Acts){target="_blank"} which was passed just two months before the Morrill Act.
 
-Under the Morrill Act, each State was given 30,000 acres for each Congressman and Senator. The idea was not that the State would build a campus on these lands, but they could sell or rent them and use the money to create an endowment to support the operational costs for a college. The totals ranged from 990,000 acres for a populous state like New York, down to a mere 90,000 acres for new states with low population. 21 western States had enough public land, so they could just pick unclaimed public land as long as it was i) surveyed and ii) not classified as mining land. 
+Under the Morrill Act, each State was given 30,000 acres for each Congressman and Senator. The idea was not that the State would build a campus on these lands, but they could sell or lease them, and use the money to create an endowment to support the operational costs for a college. The totals alloted ranged from 990,000 acres for a populous state like New York, down to a mere 90,000 acres for low-population states that only had one Representative and two Senators.
 
-However 27 other states, mostly in the the east and south, didn't have enough unsettled public land left. So instead, the Morrill Act gave these States land 'scrip', or coupons, for an equivalent amount of land that they could sell on the market, and use the money to support their university. The purchasers of those coupons could then go to a State out west and redeem them for a piece of unsettled public land. Hence public land in States like California was sold to support running a college not only within California but also states back east. 
+21 western States had enough public land, so they could just pick unclaimed public land as long as it was i) surveyed and ii) not classified as mining land. However 27 other states, mostly in the the east and south, didn't have enough unsettled public land left. So instead, the Morrill Act gave these States land 'scrip', or coupons, for an equivalent amount of land that they could sell on the market, and use the money to support their university. The purchasers of those coupons could then go to a State out west and redeem them for a piece of unsettled public land. Hence public land in States like California was given away not only to support running a college within California, but also states back east.
 
-Hence the name 'land grant' institutions.
-
-# The Morrill Act Map
+# III. Mapping the Morrill Act Lands
 
 The Morrill Act Map is intended to help anyone who cares about land grant universities reconnect with our roots, literally. The map aspires to show all of the federal lands that were transferred under the Morrill Act of 1862. 
 
-http://arcg.is/0Sja0L 
+The map shows spatial and temporal patterns of land allocation....
+
+See also papers by Sauder.
+
+*More coming soon...*
+
+
 
 ## How the Map Was Made
 
-This map is derived from the orginal patent records (a patent is like the original title deed for a piece of land) that were issued by the US Government Land Office (now the BLM). These documents have been digitized by the BLM and connected to property boundaries in a GIS format. The BLM share these data on their website, and a R script was used to download patents issused under the Morrill Act, and make the map.
+This map is derived from the orginal Federal Land Patent records (a Land Patent is like the original title deed for a piece of land) that were issued by the US General Land Office (now the [Bureau of Land Management](https://www.blm.gov/)). These documents have been digitized by the *Bureau of Land Management, Eastern States Office* (see [https://glorecords.blm.gov/](https://glorecords.blm.gov/), and parcel boundaries generated in a GIS format. The BLM  make these data available on their [website](https://glorecords.blm.gov/BulkData/default.aspx){target="_blank"} as CSV files, and they also provide an [API Service](https://gis.blm.gov/arcgis/rest/services/Cadastral/BLM_Natl_PLSS_CadNSDI/MapServer/exts/CadastralSpecialServices/FindLD) through which the boundaries of parcel can be retrieved. An R script was used to download the data and generate the polygons for the map.
 
-## Status of the Map
+## Status of the Map 
 
-## Caveats
-- For various reasons related mostly to the paper records and very old surveying techniques, a small number of patents are not on the map. 
-- This map should be taken as a preliminary
+The table below shows the current numbers of Land Patents, parcels (i.e., a textual land description), and polygons available for each State. Notes:
+
+- Not all States are included because many States didn't have enough unclaimed public land remaining in 1862, and hence no federal land was given out under the Morrill Act.
+
+- The number of parcels (land descriptions) frequently exceeds the number of Land Patents because some Patents have more than one parcel listed.
+
+- Not all all parecls are shown on the map due to i) the R code may is not able to parse the land description (a work in progress) and/or ii) a polygon boundary may not be available in the GLO database (BLM continues to update the GIS data).
+
+```{r map_dat_status, cache=TRUE, echo=FALSE}
+load("../pat_stats.RData")
+dt_opts <- list(paging = FALSE, searching = FALSE)
+
+DT::datatable(pat_stats %>% 
+                select(state, num_pat, num_ld, geom_success_num, geom_success_pct) %>% 
+                arrange(state), 
+          class = 'row-border stripe hover compact', 
+          rownames = F, 
+          colnames = c('State' = 'state', 'Patents' = 'num_pat', 'Parcels' = 'num_ld', 'Parcel Polys - Num' = 'geom_success_num', 'Parcel Polys - Pct' = 'geom_success_pct'),
+          autoHideNavigation = T, 
+          caption = paste0("Morrill Map Data Status (", Sys.Date(), ")"),
+          options = dt_opts) %>% 
+  formatPercentage(columns = "Parcel Polys - Pct") 
+```
 
 
+# IV. About The Project
 
-# About The Project
+Mapping the Morrill Act is a project being understaken by a group of academics within the University of California Division of Agriculture and Natural Resources, including [Andy Lyons](https://ucanr.edu/?facultyid=32909){target="_blank"}, [Lucy Diekmann](http://cesantaclara.ucanr.edu/Programs/contact/?facultyid=40005){target="_blank"}, [Jennifer Sowerwine](https://ucanr.edu/?facultyid=5143){target="_blank"}, and Jason Lam. 
 
+Data and support from BLM....
+---
 
+![](images/igis-anr-horizontal_550x58.png)
 

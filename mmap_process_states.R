@@ -1,28 +1,34 @@
+## Check for valid combos of processing options
+if (save_archive_copy && !make_archive_copy) stop("You can't save archives without making them")
 
 ## Initialize objects needed to save results
-if (save_geojson_comb) comb_sf <- NULL
+if (save_comb_geojson || save_comb_rdata) comb_sf <- NULL
 if (save_badld) ld_bad <- list()
 if (save_stats) pat_stats <- NULL
 
 for (state_abbrev in states_to_process) {
 
   cat(state_abbrev, "\n")  
+  
+  ## Skip the state if it's in the completed list (meaning the csv files have been imported)
   if (skip_completed && (state_abbrev %in% states_completed)) {
     cat(crayon::yellow("  ", state_abbrev, "already completed. Skipping."), "\n") 
     next
   }
   
+  ## Skip the state if it's in the list of states with 'no data'
   if (skip_nodata && (state_abbrev %in% states_nodata)) {
     cat(crayon::yellow("  ", state_abbrev, "has no Morrill Act patents. Skipping."), "\n") 
     next
   }
+
+  state_exists_in_memory <- exists(state_abbrev)
 
   ## Load a saved RData file if needed
   if ((load_rdata == "always") || (load_rdata == "when-state-not-in-memory" && !exists(state_abbrev))) {
     rdata_fn <- file.path(dir_rdata, paste0(state_abbrev, "_patent_data.RData"))
     if (file.exists(rdata_fn)) {
       load(rdata_fn)
-      #rdata_found <- TRUE
       cat(crayon::green("   imported rdata file for ", state_abbrev, sep=""), "\n")
     }
   }
@@ -41,11 +47,11 @@ for (state_abbrev in states_to_process) {
     }
   } 
 
-  if (exists(state_abbrev)) {
-    if (!rdata_found && !import_csv_if_needed) {
-      cat(crayon::green("   Using", state_abbrev, "in memory."), "\n") 
-    }
-  } else {
+  if (state_exists_in_memory && load_rdata != "always") {
+    cat(crayon::green("   Using", state_abbrev, "in memory."), "\n") 
+  }
+
+  if (!exists(state_abbrev)) {
     cat(crayon::yellow("   No data for", state_abbrev, ". Skipping."), "\n") 
     next
   }
@@ -139,12 +145,66 @@ for (state_abbrev in states_to_process) {
     ## (Re)compute the land description field (from which the API URL is made)
     if (compute_ld) {
       if (length(pat_idx) == 0) {
-        cat(crayon::yellow("   no land descriptions match the criteria. Recompute lld"), "\n")
+        cat(crayon::yellow("   No land description rows match the pat_idx_option. Skipping (re)compute lld"), "\n")
       } else {
         assign(state_abbrev, recompute_ld(get(state_abbrev), pat_idx) )
       }
       
     }
+    
+    ## Add a column of the patentee name(s) separated by a comma
+    if (add_patentees) {
+
+      ## Import Patentee table
+      patentee_csv <- file.path(dir_glo, paste0(state_abbrev, "_Patentee.csv"))  
+      if (!file.exists(patentee_csv)) stop(paste(patentee_csv, "not found"))
+
+      patentee_tbl <- read_csv(file = patentee_csv, col_names = TRUE, 
+                               col_types = cols(
+                                  accession_nr = col_character(),
+                                  doc_class_code = col_character(),
+                                  patentee_seq_nr = col_integer(),
+                                  patentee_last_name = col_character(),
+                                  patentee_first_name = col_character(),
+                                  patentee_middle_name = col_character() )) %>% 
+        mutate(patentee_name_comb = paste0(patentee_last_name,
+                                          if_else(is.na(patentee_first_name), "", paste0("-", patentee_first_name)),
+                                          if_else(is.na(patentee_middle_name), "", paste0("-", patentee_middle_name))
+                                          )
+               )
+      
+      # browser()
+      # names(CA$patents_tbl); nrow(CA$patents_tbl)
+      # names(patentee_tbl); nrow(patentee_tbl)
+      # 
+      # x <- patentee_tbl %>% left_join(CA$patents_tbl, by = "accession_nr")
+      
+      # patentees_by_accession_tbl <- patentee_tbl %>% 
+      #   group_by(accession_nr) %>%
+      #   summarise(patentees = paste(patentee_name_comb, collapse = "; "))
+       
+      accession_patentees_tbl <- get(state_abbrev)$patents_tbl %>% 
+        left_join(patentee_tbl, by = "accession_nr") %>% 
+        group_by(accession_nr) %>% 
+        summarise(patentees = paste(patentee_name_comb, collapse = "; "))
+
+      # nrow(accession_patentees_tbl)
+      # names(accession_patentees_tbl)
+      # View(accession_patentees_tbl[1:500,])
+
+      
+      assign(state_abbrev, list(patents_tbl = get(state_abbrev)$patents_tbl %>% 
+                                  left_join(accession_patentees_tbl, by = "accession_nr"),
+                                patents_ld_sf = get(state_abbrev)$patents_tbl %>%
+                                  left_join(accession_patentees_tbl, by = "accession_nr")))
+      
+      # x <- CA$patents_ld_sf
+      # names(x)
+      # nrow(x)
+      # View(x[1:500,])
+      
+    }
+    
     
     #################################################################################
     ## Loop through API and update geometries
@@ -166,10 +226,13 @@ for (state_abbrev in states_to_process) {
       
       ## RUN THE LOOP TO FILL THE GEOMETRY
       if (length(pat_idx) == 0) {
-        cat(crayon::yellow("   no land descriptions match the criteria. Skipping API calls."), "\n")
+        cat(crayon::yellow("   No land description rows match the pat_idx_option. Skipping getting geoms."), "\n")
       } else {
-        assign(state_abbrev, mmap_fill_geom(get(state_abbrev), pat_idx, 
-                                            pause_after_n = pause_after_n))
+        assign(state_abbrev, mmap_fill_geom(get(state_abbrev), pat_idx = pat_idx, 
+                                            state_abbrev = state_abbrev,
+                                            pause_after_n = pause_after_n,
+                                            save_api_urls = c("on_fail", "on_success")[1],
+                                            use_archived_objs = use_archived_objs))
       }
       
     }
@@ -183,8 +246,7 @@ for (state_abbrev in states_to_process) {
       cat(crayon::green("   saving ", state_abbrev, "_patent_data.RData", sep = ""), "\n")
       save(list = state_abbrev,
            file = file.path(dir_rdata, paste0(state_abbrev, "_patent_data.RData")) ,
-           compress = TRUE,
-           compression_level = 6)
+           compress = TRUE, compression_level = 6)
     }
     
     
@@ -210,16 +272,29 @@ for (state_abbrev in states_to_process) {
               delete_dsn = TRUE)
     }
     
-    ## Generated a Combined Simple Feature
-    if (save_geojson_comb) {
+    ## Append polygons from this state to a combined sf data frame
+    if (save_comb_geojson || save_comb_rdata) {
       if (is.null(comb_sf)) {
         comb_sf <- get(state_abbrev)$patents_ld_sf
       } else {
         comb_sf <- rbind(comb_sf, get(state_abbrev)$patents_ld_sf)
       }
     }
+
+    if (make_archive_copy) {
+      cat(crayon::green("   creating ", state_abbrev, "_bak", sep = ""), "\n")
+      assign(paste0(state_abbrev, "_bak"), get(state_abbrev))
+
+      if (save_archive_copy) {
+        cat(crayon::green("   saving zbak_", state_abbrev, "_patent_data.RData", sep = ""), "\n")
+        save(list = paste0(state_abbrev, "_bak"),
+             file = file.path(dir_rdata, paste0("zbak_", state_abbrev, "_patent_data.RData")),
+             compress = TRUE, compression_level = 6)
+      }
+    }
     
-        ## Export to geopackage
+    
+    ## Export to geopackage
     if (save_geopackage) {
       ## Add the land descriptions polygon layer (may have a number of missing polygons)
       st_write(get(state_abbrev)$patents_ld_sf,
@@ -246,13 +321,22 @@ for (state_abbrev in states_to_process) {
 save(states_completed, file="states_completed.RData")
 
 ## Generated a Combined Simple Feature
-if (save_geojson_comb) {
+if (save_comb_rdata) {
+  cat(crayon::green("   saving all_patent_data.RData", sep = ""), "\n")
+  save(comb_sf,
+       file = file.path(dir_rdata, "all_patent_data.RData") ,
+       compress = TRUE, compression_level = 6)
+}
+
+## Generated a Combined Simple Feature
+if (save_comb_geojson) {
   st_write(comb_sf, dsn = comb_geojson_fn, delete_dsn = TRUE)
 }
 
 if (save_stats) {
   save(pat_stats, file="pat_stats.RData")
   cat("pat_stats (re)created and saved\n")
+  View(pat_stats)
 }
 
 if (save_badld) {

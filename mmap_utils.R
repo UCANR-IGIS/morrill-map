@@ -55,7 +55,7 @@ mmap_view_recs <- function(dfs, pat_idx) {
 
 recompute_ld <- function(dfs, pat_idx) {
   
-  ## Construct the sub-section part of the land description.
+  ## (Re)construct the sub-section part of the land description.
   ld_subsect <- ld_subsect_parse(dfs$patents_ld_sf$aliquot_parts)[pat_idx]
   
   if (is.character(dfs$patents_ld_sf$meridian_code)) {
@@ -74,10 +74,17 @@ recompute_ld <- function(dfs, pat_idx) {
                         ld_subsect)) %>% 
     pull(lld)
   
+  ## Reset the geometry to empty
+  for (i in pat_idx) dfs$patents_ld_sf$geometry[[i]] <- st_multipolygon()
+  
+  ## Reset the bounding box to reflect the new geometries
+  dfs$patents_ld_sf <- dfs$patents_ld_sf %>% slice(1:nrow(dfs$patents_ld_sf))
+  
   ## Reset the API fields 
   dfs$patents_ld_sf[pat_idx, "api_status"] <- NA
   dfs$patents_ld_sf[pat_idx, "api_url_middle"] <- NA
   dfs$patents_ld_sf[pat_idx, "api_landdescription"] <- NA
+  
   
   dfs
 }
@@ -85,7 +92,7 @@ recompute_ld <- function(dfs, pat_idx) {
 
 ld_subsect_parse <- function(aliquot_parts) {
   
-  cat("Parsing the aliquot_parts column...")
+  cat(crayon::green("   parsing the aliquot_parts column..."))
   
   ## Create an empty vector for the sub-section component of the legal land description
   #ld_subsect <- rep(NA, nrow(patents_ld_tbl))
@@ -129,9 +136,53 @@ ld_subsect_parse <- function(aliquot_parts) {
   idx_else <- (1:length(aliquot_parts))[-idx_dealtwith]
   ld_subsect[idx_else] <- paste0(" ALIQ ", aliquot_parts[idx_else])
 
-  cat("Done.\n")
+  cat(crayon::green("   Done.\n"))
   ld_subsect
 }
+
+mmap_show_opts <- function() {
+  ## Utility function to show the values for all the processing settings
+  
+  vars_to_show <- c("dir_glo", "dir_rdata", "dir_shp", "dir_geojson", "dir_gbd", "comb_geopackage_fn", "comb_geojson_fn", "states_to_process", "skip_nodata", "skip_completed", "load_rdata", "import_csv_if_needed", "save_stats", "save_badld", "add_sig_year", "geom_convert_single2multi", "compute_ld", "add_patentees", "make_archive_copy", "save_archive_copy", "get_geoms", "use_archived_objs", "pat_idx_option", "pat_idx", "save_stats", "save_badld", "add_sig_year", "save_rdata", "save_geopackage", "save_shp", "save_geojson_ind", "save_geojson_comb")
+  
+  for (var in vars_to_show) {
+    cat(var, ": ", ifelse(is.logical(get(var)), ifelse(get(var), green(get(var)), red(get(var))) , paste(get(var), collapse = ",")), 
+        "\n", sep = "")
+  }
+  
+}
+
+mmap_del_vars <- function(states = state.abb, baks = TRUE) {
+  
+  ans <- readline(prompt = "This will delete objects in memory? Continue? y/n ")
+  if (ans != "y") return(invisible(NULL))
+
+  if (!identical(states, FALSE)) {
+    objs_del <- states[states %in% ls(envir = .GlobalEnv)]
+    if (length(objs_del) > 0) {
+      rm(list = objs_del, envir = .GlobalEnv)
+      cat("States deleted: ", paste(objs_del, collapse = ", "), "\n")
+    } else {
+      cat("No States found in memory \n")
+    }
+    
+  }
+  
+  ## This willl delete all objects in memory that end with '_bak'. Use with care!!
+  if (baks) {
+    objs_del <- grep("_bak$", ls(envir = .GlobalEnv), value = TRUE)
+    if (length(objs_del) > 0) {
+      rm(list = objs_del, envir = .GlobalEnv)
+      cat("Objects deleted: ", paste(objs_del, collapse = ", "), "\n")
+    } else {
+      cat("No backup objects found in memory \n")
+    }
+  }
+  
+  
+}
+
+
 
 ## DEPRECATED - SEE compute_ld above
 # mmap_recompute_ld <- function(dfs, pat_idx) {

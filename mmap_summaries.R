@@ -17,14 +17,14 @@ load(file.path(dir_rdata, paste0(state_abbrev, "_patent_data.RData")))
 
 
 
-## Import Patentee table
-patentee_csv <- "data/CA_Patentee.csv"
-file.exists(patentee_csv)
-patentee_tbl <- read_csv(file = patentee_csv, col_names = TRUE) %>% 
-  mutate(patentee_name_comb = paste(patentee_last_name,
-                                    patentee_first_name, 
-                                    patentee_middle_name,
-                                    sep="-"))
+# ## Import Patentee table
+# patentee_csv <- "data/CA_Patentee.csv"
+# file.exists(patentee_csv)
+# patentee_tbl <- read_csv(file = patentee_csv, col_names = TRUE) %>% 
+#   mutate(patentee_name_comb = paste(patentee_last_name,
+#                                     patentee_first_name, 
+#                                     patentee_middle_name,
+#                                     sep="-"))
 
 
 

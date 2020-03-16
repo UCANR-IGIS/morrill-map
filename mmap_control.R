@@ -9,6 +9,13 @@
 ## Add a global counter
 ## Make the 'save results every 1000 recorsd' an option
 
+## read about block_nr and survey_nr. Coerce these fields to be characters
+## Are they important?
+## table(probs_df$col)
+## block_nr ld_remarks section_nr  survey_nr 
+##    3468         20          2       2999 
+
+
 ## Load required libraries; set default directory locations
 source("mmap_load_assets.R")
 
@@ -22,9 +29,9 @@ load("pat_stats.RData"); load("ld_bad.RData")
 #################################################################################
 
 (states_to_process <- state.abb)
-(states_to_process <- state.abb[41:50])
-(states_to_process <- c("SD", "CA")[1])
-(states_to_process <- c("WA", "MN", "OR")[2])
+# (states_to_process <- state.abb[41:50])
+(states_to_process <- c("SD", "CA", "AZ", "NM")[4])
+# (states_to_process <- c("WA", "MN", "OR")[2])
 
 ## Skip a state that has been found to have no Morrill Act Patents (or no Patents at all)
 skip_nodata <- TRUE
@@ -33,46 +40,53 @@ skip_nodata <- TRUE
 skip_completed <- FALSE
   
 ## If a RData file exists, load it first (regardless if there's one in memory)
-load_rdata <- c("always", "when-state-not-in-memory")[2]
+(load_rdata <- c("always", "when-state-not-in-memory", "never")[2])
 
 ## If a RData file is not found, and the object is not already in Memory,
 ## try to import from a csv file?
-import_csv_if_needed <- FALSE
+(import_csv_if_needed <- T)
 
 ## Which set land descriptions to grab a geom
-get_geoms <- F
-(pat_idx_option <- c("NAs", "all errors", "Status not returned", "fail", "Num features <> 1", "all", "var_pat_idx")[3])
-pat_idx <- 437
+(get_geoms <- T)
+(use_archived_objs <- T)
+(pat_idx_option <- c("NAs", "all errors", "Status not returned", "fail", "Num features <> 1", "all", "var_pat_idx")[1])
+pat_idx <- 1
 
-## When to pause 
+## Pausing options (for API calls)
 (pause_after_n = list("1" = 0, "600" = 5, "3900" = 60 * 3))
 #(pause_after_n = list("1" = 1, "3900" = 60 * 3))  ## add a 1-sec delay between calls
 
 ## Other Processing Steps
-save_stats <- T
-save_badld <- T
+save_stats <- F
+save_badld <- F
 
-## One-time Processing Tasks
+## One-time Processing Tasks - Comment out when completed and will never ever be needed again
 # add_sig_year <- FALSE
 # geom_convert_single2multi <- FALSE
-# compute_ld <- F   ## uses the same pat_idx_option as get-geom
+# add_patentees <- F
+
+compute_ld <- F   ## regenerate the lld value (use after upgrading the aliqot_parts parser)
+                    ## uses the same pat_idx_option as get-geom
+(make_archive_copy <- F)
+(save_archive_copy <- F)
+
+(debugme <- FALSE)
 
 ## What to save when each iteration is done
-save_rdata <- F
-save_geopackage <- FALSE   ## one geopackage for all states processed
-save_shp <- FALSE          ## individual state shapefiles
-save_geojson_ind <- FALSE  ## individuaul state geojson
-save_geojson_comb <- FALSE      ## combined 
+save_rdata <- TRUE
+save_geopackage <- FALSE    ## one geopackage for all states processed
+save_shp <- FALSE           ## individual state shapefiles
+save_geojson_ind <- FALSE   ## individuaul state geojson
+save_comb_geojson <- FALSE  ## save combined polygon layer as geojson
+save_comb_rdata <- FALSE    ## save combined sf data frame as rdata
 
 ############################################
-############################################
-## NEED A GLOBAL COUNTER
-############################################
+## RUN THE PROCESSING LOOP
 ############################################
 
-## Run the loop
+mmap_show_opts()
 
-source("mmap_multistate_loop.R")
+source("mmap_process_states.R")
 
 # x <- states_completed
 # states_completed <- states_completed[!states_completed %in% states_nodata]
@@ -90,7 +104,7 @@ load(file.path(dir_rdata, paste0(state_abbrev, "_patent_data.RData")))
 ##########################################################
 ## EXPLORE RESULTS
 ##########################################################
-(state_abbrev <- c("KS", "SD", "CA", "MN")[4])
+(state_abbrev <- c("KS", "SD", "CA", "NM")[4])
 
 ## Plot all
 plot(get(state_abbrev)$patents_ld_sf %>% st_geometry(), col="grey", axes=TRUE)
@@ -240,6 +254,45 @@ View(patents_ld_sf)
 
 as.data.frame(table(patents_ld_sf$api_status))
 plot(patents_ld_sf %>% slice(pat_idx) %>% st_geometry(), col="gray90")
+
+
+######################################
+## Save combined polygon layer to a File GeoDatabase
+
+dim(comb_sf)
+
+# (comb_few_sf <- comb_sf[1:10,])
+
+library(arcgisbinding)
+arc.check_product()
+
+## library(sp)  not needed
+
+# arc.write(path = "C:/Users/kenta/Documents/ArcGIS/Projects/MyProject2/MyProject2.gdb/Kyuson_Aza", data = df2, overwrite = TRUE)
+
+## create and write to a new file geodatabase
+# (fgdb_path <- file.path(tempdir(), "mydata.gdb"))
+gdb_fn <- file.path(dir_gbd, "morrill-map.gdb")
+if (file.exists(gdb_fn)) cat(crayon::red("WARNING, file geodatabase already exists! \n"))
+arc.write(path = file.path(gdb_fn, "morrill_ld"), data = comb_sf, overwrite = FALSE, validate = TRUE)
+
+
+########################################################
+## Blank the geometries of selected rows
+
+a1 <- AZ$patents_ld_sf
+nrow(a1)
+
+idx <- 5:6
+
+## Create an empty geometry column with empty polygons. This will get filled in as we call the API
+empty_polys_sfc <- st_sfc(lapply(1:length(idx), function(x) st_polygon()), crs = 4326)
+
+x <- AZ$patents_ld_sf[idx, "geometry"]
+
+
+<- empty_polys_sfc
+
 
 
 
