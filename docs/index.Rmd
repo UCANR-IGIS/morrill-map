@@ -15,15 +15,16 @@ library(dplyr)
 
 <div style="width:440px; margin:2em auto;"><img src="images/vintage-decorative-divider.svg" style="width:430px;" /></div>
 
-
 # I. The Origins of US "Land Grant" Universities
 
-<div style="float:right; border:2px solid lightgray; padding:5px; margin-left:20px;"><img src="images/usda-land-grant-colleges-map-2019-03-18_800x540.png" style="width:300px; height:202px;"/><br><span style="font-style:italic;">Land Grant Universities and Colleges. Source: <a href="https://nifa.usda.gov/resource/land-grant-colleges-and-universities-map
+<div style="float:right; border:1px solid gray; padding:5px; margin-left:20px; margin-bottom:10px; box-shadow:4px 4px #888888;"><a href="https://nifa.usda.gov/sites/default/files/resource/LGU-Map-03-18-19.pdf" target="_blank"><img src="images/usda-land-grant-colleges-map-2019-03-18_800x540.png" style="width:300px; height:202px;"/></a><br><span style="font-style:italic; font-size: 90%;">US Land Grant Universities and Colleges. Source: <a href="https://nifa.usda.gov/resource/land-grant-colleges-and-universities-map
 ">USDA</a></span></div>
 
-Did you ever wonder how the big public universities across the USA (e.g., University of Michigan, University of California) got started? Many of the big state schools got started with the help from the [1862 Morrill Act](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts) which started the "Land Grant University" system.
+Did you ever wonder how the big public universities across the USA (e.g., University of Michigan, University of California) came into being? Many of the big state schools were established or got a big boost from the [1862 Morrill Act](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts), which created what is today known as the "Land Grant University" system. 
 
-The Morrill Act was signed into law by Abraham Lincoln in July 1862, during the middle of the Civil War. This visionary act provided support and incentives for the States to establish colleges for "*agriculture and the mechanical arts*" (i.e., engineering). At the time, the country needed engineers for big infrastructure projects like the railroads and factories. Most of the population was also still in farming, for which there was little research or training. The few Universities in those days were expensive and focused on the liberal arts and business. Senator Samuel Morrill had been trying for several years to incentivize the States to establish more applied colleges, and with the southern States temporarily out of the Union, he had enough votes.
+But what does "Land Grant University" actually mean? Before we get to that, a little more background on the Morrill Act.
+
+Abraham Lincoln signed the Morrill Act into law in July 1862, during the middle of the Civil War. This visionary piece of legislation provided support and incentives for the States to establish colleges for "*agriculture and the mechanical arts*" (i.e., engineering). At the time, the country needed engineers for big infrastructure projects like the railroads and factories. Most of the population was also still in farming, for which there was little research or training. The few Universities in those days were expensive and focused on the liberal arts and business. Senator Samuel Morrill had been trying for several years to incentivize the States to establish more applied colleges, and with the southern States temporarily out of the Union, he had enough votes.
 
 <div style="width:500px; margin:2em auto;">
 <div style="text-align:center; display:inline-block; margin-right:10px;"><img src="images/lincoln_230x300.jpg" style="width:230px; height:300px;"/><br/>Abraham Lincoln</div>
@@ -88,6 +89,7 @@ DT::datatable(pat_stats %>%
 Mapping the Morrill Act is a project being understaken by a group of academics within the University of California Division of Agriculture and Natural Resources, including [Andy Lyons](https://ucanr.edu/?facultyid=32909){target="_blank"}, [Lucy Diekmann](http://cesantaclara.ucanr.edu/Programs/contact/?facultyid=40005){target="_blank"}, [Jennifer Sowerwine](https://ucanr.edu/?facultyid=5143){target="_blank"}, and Jason Lam. 
 
 Data and support from BLM....
+
 ---
 
 ![](images/igis-anr-horizontal_550x58.png)

@@ -230,7 +230,7 @@ mmap_fill_geom <- function(dfs, pat_idx, state_abbrev,
       idx <- pat_idx[i]
       if (is.na(idx)) next
       
-      #browser()
+      browser()
       
       ## Get the land description for this row
       lld_str <- dfs$patents_ld_sf %>% st_drop_geometry() %>% 

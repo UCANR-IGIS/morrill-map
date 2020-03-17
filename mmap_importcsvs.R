@@ -219,6 +219,10 @@ mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing
   ld_csv <- file.path(dir_glo, paste0(state_abbrev, "_Land_Description.csv"))
   if (!file.exists(ld_csv)) stop(paste0("Can't find ", ld_csv))
   
+  ## Convert NULLs to spaces
+  ld_raw <- read_file_raw(ld_csv)
+  ld_raw[ld_raw == 0] <- as.raw(32)
+  
   ## Import land descriptions
   ld_coltypes <- cols(
     accession_nr = col_character(),
@@ -238,8 +242,9 @@ mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing
     state_code = col_character()
   )
   
-  ld_tbl <- read_csv(file = ld_csv, col_names = TRUE, col_types = ld_coltypes) 
-
+  # ld_tbl <- read_csv(file = ld_csv, col_names = TRUE, col_types = ld_coltypes)
+  ld_tbl <- read_csv(ld_raw, col_names = TRUE, col_types = ld_coltypes)
+  
   ######################################################################################################  
   ## Join the land patent table to the land description table on the accession_nr column 
   ## (accession number). We omit the 'total area' column because these records are now

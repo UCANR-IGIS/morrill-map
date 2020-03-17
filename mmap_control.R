@@ -30,7 +30,7 @@ load("pat_stats.RData"); load("ld_bad.RData")
 
 (states_to_process <- state.abb)
 # (states_to_process <- state.abb[41:50])
-(states_to_process <- c("SD", "CA", "AZ", "NM")[4])
+(states_to_process <- c("SD", "CA", "AZ", "NM", "MI")[5])
 # (states_to_process <- c("WA", "MN", "OR")[2])
 
 ## Skip a state that has been found to have no Morrill Act Patents (or no Patents at all)
@@ -40,14 +40,14 @@ skip_nodata <- TRUE
 skip_completed <- FALSE
   
 ## If a RData file exists, load it first (regardless if there's one in memory)
-(load_rdata <- c("always", "when-state-not-in-memory", "never")[2])
+(load_rdata <- c("always", "when-state-not-in-memory", "never")[3])
 
 ## If a RData file is not found, and the object is not already in Memory,
 ## try to import from a csv file?
 (import_csv_if_needed <- T)
 
 ## Which set land descriptions to grab a geom
-(get_geoms <- T)
+(get_geoms <- F)
 (use_archived_objs <- T)
 (pat_idx_option <- c("NAs", "all errors", "Status not returned", "fail", "Num features <> 1", "all", "var_pat_idx")[1])
 pat_idx <- 1
@@ -278,21 +278,54 @@ arc.write(path = file.path(gdb_fn, "morrill_ld"), data = comb_sf, overwrite = FA
 
 
 ########################################################
-## Blank the geometries of selected rows
+## Import MI Land Description
 
-a1 <- AZ$patents_ld_sf
-nrow(a1)
+state_abbrev <- "MI"
+ld_csv <- file.path(dir_glo, paste0(state_abbrev, "_Land_Description.csv"))
+file.exists(ld_csv)
+if (!file.exists(ld_csv)) stop(paste0("Can't find ", ld_csv))
 
-idx <- 5:6
+## Import land descriptions
+ld_coltypes <- cols(
+  accession_nr = col_character(),
+  doc_class_code = col_character(),
+  descrip_nr = col_integer(),
+  aliquot_parts = col_character(),
+  section_nr = col_integer(),
+  township_nr = col_double(),
+  township_dir = col_character(),
+  range_nr = col_character(),
+  range_dir = col_character(),
+  block_nr = col_character(),
+  fractional_section = col_character(),   ## YN field
+  survey_nr = col_character(),
+  meridian_code = col_integer(),
+  ld_remarks = col_character(),
+  state_code = col_character()
+)
 
-## Create an empty geometry column with empty polygons. This will get filled in as we call the API
-empty_polys_sfc <- st_sfc(lapply(1:length(idx), function(x) st_polygon()), crs = 4326)
+x <- read_csv(file = ld_csv, col_names = TRUE, col_types = ld_coltypes) 
+problems(x)
 
-x <- AZ$patents_ld_sf[idx, "geometry"]
+y <- read.csv(ld_csv, skipNul = TRUE, stringsAsFactors = F)
+str(y)
 
+?read.csv
 
-<- empty_polys_sfc
+##############
+library(readr)
 
+(state_abbrev <- c("MI", "CA")[2])
 
+ld_csv <- file.path(dir_glo, paste0(state_abbrev, "_Land_Description.csv"))
+file.exists(ld_csv)
 
+d <- read_file_raw(ld_csv)
+# Convert nulls to spaces
+sum(d == 0)
+
+d[d == 0] <- as.raw(32)
+
+x <- read_csv(d, col_names = TRUE, col_types = ld_coltypes) 
+str(x)
 
