@@ -22,7 +22,10 @@ conflict_prefer("left_join", "dplyr")
 source("mmap_utils.R")
 source('mmap_importcsvs.R')
 source("mmap_getgeom.R")
-#source("mmap_recompute_ld.R") - merged into utils
+
+## Get arcgisbinding ready if needed
+library(arcgisbinding)
+arc.check_product()
 
 ## Define directories
 dir_glo <- "glo/data"  ## location of the csv files from the GLO
@@ -47,7 +50,7 @@ save_badld <- FALSE
 ## One-time processing tasks
 add_sig_year <- FALSE
 geom_convert_single2multi <- FALSE
-compute_ld <- F   ## uses the same pat_idx_option as get-geom
+compute_lld <- F   ## uses the same pat_idx_option as get-geom
 add_patentees <- F
 make_archive_copy <- F
 save_archive_copy <- F 
@@ -63,11 +66,14 @@ save_stats <- F
 save_badld <- F
 add_sig_year <- FALSE
 
-save_rdata <- FALSE
-save_geopackage <- FALSE
-save_shp <- FALSE
-save_geojson_ind <- FALSE
-save_geojson_comb <- FALSE
+save_ind_geopackage <- FALSE
+save_ind_shp <- FALSE
+save_ind_geojson <- FALSE
+
+save_comb_rdata <- FALSE
+save_comb_geojson <- FALSE  ## save combined polygon layer as geojson
+save_comb_rdata <- FALSE    ## save combined sf data frame as rdata
+save_comb_gdb <- FALSE
 
 debugme <- FALSE
 

@@ -1,7 +1,7 @@
 ## OK to Source on Save
 
 mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing = TRUE,
-                            rdata_save = TRUE, dir_rdata = "rdata") {
+                            dir_rdata = "rdata") {
   
   ## IMPORT CSV DATA
   
@@ -55,6 +55,16 @@ mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing
 
   }  
     
+  
+  ## See if there are any embedded nuls
+  patents_raw <- read_file_raw(patents_csv)
+  if (sum(patents_raw == 0) > 0) {
+    cat(crayon::yellow("   Found embedded nuls in ", patents_csv, ". Converting to spaces. \n", sep = "")) 
+    patents_raw[patents_raw == 0] <- as.raw(32)
+    patents_import <- patents_raw
+  } else {
+    patents_import <- patents_csv
+  }
   
   ## Import patent records where authority_code == 262201 
   ##  Authority code 262201 = July 2, 1862	State Grant-Agri College)
@@ -112,7 +122,7 @@ mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing
     coal_entry_nr = col_character()
   )
   
-  patents_tbl <- read_csv(file = patents_csv, col_names = TRUE, col_types = patents_coltypes) %>% 
+  patents_tbl <- read_csv(patents_import, col_names = TRUE, col_types = patents_coltypes) %>% 
     filter(authority_code == "262201") %>% 
     select(accession_nr, doc_class_code, state_code, authority_code, 
            signature_present, signature_date, total_acres, geographic_name,
@@ -162,8 +172,18 @@ mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing
   
   patentee_csv <- file.path(dir_glo, paste0(state_abbrev, "_Patentee.csv"))  
   if (!file.exists(patentee_csv)) stop(paste(patentee_csv, "not found"))
-  
-  patentee_tbl <- read_csv(file = patentee_csv, col_names = TRUE, 
+
+  ## See if there are any embedded nuls
+  patentee_raw <- read_file_raw(patentee_csv)
+  if (sum(patentee_raw == 0) > 0) {
+    cat(crayon::yellow("   Found embedded nuls in ", patentee_csv, ". Converting to spaces."), "\n", sep = "") 
+    patentee_raw[patentee_raw == 0] <- as.raw(32)
+    patentee_import <- patentee_raw
+  } else {
+    patentee_import <- patentee_csv
+  }
+    
+  patentee_tbl <- read_csv(file = patentee_import, col_names = TRUE, 
                            col_types = cols(
                              accession_nr = col_character(),
                              doc_class_code = col_character(),
@@ -183,35 +203,7 @@ mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing
     summarise(patentees = paste(patentee_name_comb, collapse = "; "))
   
   patents_tbl <- patents_tbl %>% left_join(accession_patentees_tbl, by = "accession_nr") 
-  
-  #browser()
-  
-  # patents_tbl <- patents_tbl %>% 
-  #   left_join(patentee_tbl, by = "accession_nr") %>% 
-  #   group_by(accession_nr) %>% 
-  #   summarise(patentees = paste(patentee_name_comb, collapse = "; "))
-  
-    
-  # browser()
-  # names(CA$patents_tbl); nrow(CA$patents_tbl)
-  # names(patentee_tbl); nrow(patentee_tbl)
-  # 
-  # x <- patentee_tbl %>% left_join(CA$patents_tbl, by = "accession_nr")
-  
-  # patentees_by_accession_tbl <- patentee_tbl %>% 
-  #   group_by(accession_nr) %>%
-  #   summarise(patentees = paste(patentee_name_comb, collapse = "; "))
-  
-  # accession_patentees_tbl <- patents_tbl %>% 
-  #   left_join(patentee_tbl, by = "accession_nr") %>% 
-  #   group_by(accession_nr) %>% 
-  #   summarise(patentees = paste(patentee_name_comb, collapse = "; "))
-  # 
-  # str(accession_patentees_tbl)
-  # dim(accession_patentees_tbl)
-  # accession_patentees_tbl2 <- patentee_tbl 
-  
-  
+
   ###################################################################################
   ## Import the land description csv file
   ###################################################################################
@@ -219,21 +211,28 @@ mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing
   ld_csv <- file.path(dir_glo, paste0(state_abbrev, "_Land_Description.csv"))
   if (!file.exists(ld_csv)) stop(paste0("Can't find ", ld_csv))
   
-  ## Convert NULLs to spaces
+  ## See if there are any embedded nuls
   ld_raw <- read_file_raw(ld_csv)
-  ld_raw[ld_raw == 0] <- as.raw(32)
-  
+  if (sum(ld_raw == 0) > 0) {
+    cat(crayon::yellow("   Found embedded nuls in ", ld_csv, ". Converting to spaces."), "\n", sep = "") 
+    ld_raw[ld_raw == 0] <- as.raw(32)
+    ld_import <- ld_raw
+  } else {
+    ld_import <- ld_csv
+  }
+
   ## Import land descriptions
   ld_coltypes <- cols(
     accession_nr = col_character(),
     doc_class_code = col_character(),
     descrip_nr = col_integer(),
     aliquot_parts = col_character(),
-    section_nr = col_integer(),
+    section_nr = col_integer(),      ## in CO these look like 22.U (perhaps U is unknown?)
+    #township_nr = col_character(),
     township_nr = col_double(),
     township_dir = col_character(),
     range_nr = col_character(),
-    range_dir = col_character(),
+    range_dir = col_character(),  ## need to import as char because a small number look like "53.A"
     block_nr = col_character(),
     fractional_section = col_character(),   ## YN field
     survey_nr = col_character(),
@@ -243,7 +242,7 @@ mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing
   )
   
   # ld_tbl <- read_csv(file = ld_csv, col_names = TRUE, col_types = ld_coltypes)
-  ld_tbl <- read_csv(ld_raw, col_names = TRUE, col_types = ld_coltypes)
+  ld_tbl <- read_csv(ld_import, col_names = TRUE, col_types = ld_coltypes)
   
   ######################################################################################################  
   ## Join the land patent table to the land description table on the accession_nr column 
@@ -296,7 +295,7 @@ mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing
   patents_ld_tbl <- patents_ld_tbl %>%
     mutate(lld = paste0(state_code, " ", sprintf("%02d", meridian_code),
                         " T", township_nr, township_dir,
-                        " R", range_nr, range_dir,
+                        " R", gsub(".0$", "", range_nr)  , range_dir,
                         " SEC ", section_nr,
                         ld_subsect),
            api_url_middle = NA,
@@ -309,17 +308,9 @@ mmap_import_csv <- function(state_abbrev, dir_glo = "glo/data", download_missing
   ## Combine the joined tibble and the empty geometry column into a new sf data frame
   ## that we can then start to fill using the API
   patents_ld_sf <- st_sf(patents_ld_tbl, geometry = empty_polys_sfc)
-  
-  ## Save copies in the global environment
-  # assign(state_abbrev, list(patents_ld_sf = patents_ld_sf,
-  #                           patents_tbl = patents_tbl))
-  # return(get(state_abbrev))
-  
+
   ## Return a list object
   list(patents_tbl = patents_tbl, patents_ld_sf = patents_ld_sf)
 }
-
-
-
 
 

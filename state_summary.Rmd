@@ -1,0 +1,19 @@
+---
+title: "Untitled"
+author: "Andy Lyons"
+date: "3/17/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+State Summary
+
+Acres allocated to other states
+
+Acres redeemed in other states
+
+
+

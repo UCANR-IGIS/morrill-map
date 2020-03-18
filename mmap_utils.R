@@ -53,7 +53,7 @@ mmap_view_recs <- function(dfs, pat_idx) {
   browseURL(html_fn)
 }
 
-recompute_ld <- function(dfs, pat_idx) {
+recompute_lld <- function(dfs, pat_idx) {
   
   ## (Re)construct the sub-section part of the land description.
   ld_subsect <- ld_subsect_parse(dfs$patents_ld_sf$aliquot_parts)[pat_idx]
@@ -136,15 +136,16 @@ ld_subsect_parse <- function(aliquot_parts) {
   idx_else <- (1:length(aliquot_parts))[-idx_dealtwith]
   ld_subsect[idx_else] <- paste0(" ALIQ ", aliquot_parts[idx_else])
 
-  cat(crayon::green("   Done.\n"))
+  cat(crayon::green("Done.\n"))
   ld_subsect
 }
 
 mmap_show_opts <- function() {
   ## Utility function to show the values for all the processing settings
   
-  vars_to_show <- c("dir_glo", "dir_rdata", "dir_shp", "dir_geojson", "dir_gbd", "comb_geopackage_fn", "comb_geojson_fn", "states_to_process", "skip_nodata", "skip_completed", "load_rdata", "import_csv_if_needed", "save_stats", "save_badld", "add_sig_year", "geom_convert_single2multi", "compute_ld", "add_patentees", "make_archive_copy", "save_archive_copy", "get_geoms", "use_archived_objs", "pat_idx_option", "pat_idx", "save_stats", "save_badld", "add_sig_year", "save_rdata", "save_geopackage", "save_shp", "save_geojson_ind", "save_geojson_comb")
+  vars_to_show <- c("dir_glo", "dir_rdata", "dir_shp", "dir_geojson", "dir_gbd", "comb_geopackage_fn", "comb_geojson_fn", "states_to_process", "skip_nodata", "skip_completed", "load_rdata", "import_csv_if_needed", "save_stats", "save_badld", "add_sig_year", "geom_convert_single2multi", "compute_lld", "add_patentees", "make_archive_copy", "save_archive_copy", "get_geoms", "use_archived_objs", "pat_idx_option", "save_stats", "save_badld", "add_sig_year", "save_ind_rdata", "save_ind_geopackage", "save_ind_shp", "save_ind_geojson", "save_comb_rdata", "save_comb_geojson", "save_comb_gdb")
   
+  #"pat_idx",
   for (var in vars_to_show) {
     cat(var, ": ", ifelse(is.logical(get(var)), ifelse(get(var), green(get(var)), red(get(var))) , paste(get(var), collapse = ",")), 
         "\n", sep = "")

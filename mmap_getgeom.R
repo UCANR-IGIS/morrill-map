@@ -173,23 +173,30 @@ mmap_fill_geom <- function(dfs, pat_idx, state_abbrev,
         next
       }
   
-      ## Look for holes in the polygon(s)
+      ## Look for a multi-ring polygon (could be a lake?)
       num_rings_per_feat <- sapply(findld_json$features, function(x) length(x$geometry$rings))
       if (FALSE %in% (num_rings_per_feat == 1)) {
-        cat("    ", crayon::red("Looks like a polygon with a lake"), "\n")
-        #browser()
+        ## No longer an error
+        cat("    ", crayon::yellow("Looks like a polygon with more than one ring"), "\n")
         
-        err_msg <- "Rings list should be length 1 (simple polygon, no holes)"
-        cat("    ", crayon::red(err_msg), "\n")
-        dfs$patents_ld_sf[idx, "api_status"] <- err_msg
-        if ("on_fail" %in% save_api_urls) dfs$patents_ld_sf[idx, "api_url_middle"] <- api_url_middle
-        next
+        # err_msg <- "Rings list should be length 1 (simple polygon, no holes)"
+        # cat("    ", crayon::red(err_msg), "\n")
+        # dfs$patents_ld_sf[idx, "api_status"] <- err_msg
+        # if ("on_fail" %in% save_api_urls) dfs$patents_ld_sf[idx, "api_url_middle"] <- api_url_middle
+        # next
       }
   
       ## Extract coordinates from the JSON object
       ## Get the coordinates for the rings, and put them in a list of lists of matrices
-      ring_coords_mat_lst <- lapply(findld_json$features, 
-                                    function(x) list(matrix(data=unlist(x$geometry$rings), ncol=2, byrow = TRUE)))
+      
+      ## This works well when there are multiple features
+      # ring_coords_mat_lst <- lapply(findld_json$features, 
+      #                         function(x) list(matrix(data=unlist(x$geometry$rings), ncol=2, byrow = TRUE)))
+      
+      ## This (should) work when there are multiple features potentially with multiple rings
+      ring_coords_mat_lst <- lapply(findld_json$features, function(x) lapply(x$geometry$rings, function(y) matrix(data=unlist(y), ncol=2, byrow = TRUE) ))
+      
+      #matrix(data= unlist(findld_json$features[[1]]$geometry$rings[[1]]), ncol=2, byrow = TRUE)
       
       ## Construct the MULTIPOLYGON object
       ld_multipoly <- st_multipolygon(ring_coords_mat_lst, dim = "XY")
@@ -230,7 +237,7 @@ mmap_fill_geom <- function(dfs, pat_idx, state_abbrev,
       idx <- pat_idx[i]
       if (is.na(idx)) next
       
-      browser()
+      # browser()
       
       ## Get the land description for this row
       lld_str <- dfs$patents_ld_sf %>% st_drop_geometry() %>% 
