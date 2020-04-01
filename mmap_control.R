@@ -8,9 +8,16 @@
 ## Add a global counter
 ## Make the 'save results every 1000 recorsd' an option
 
-## Work on state summaries
-## AGOL map - show me all the land that went to NY
-## Think about what data I want to share
+## Run it by the BLM guys
+
+## Work on state summaries (CAN I include a leaflet map)
+    # generate a list of patentee names that have the word 'California' in them
+
+## AGOL map - show me all the land that went to NY. Show me all the land that was redeemed by Mr. X.
+
+## Think about what data I want to share and in what format. Ask the BLM guys if this is a good idea.
+
+## Add document_nr to the pop-up window (to help you find the right LD in the Patent Record)
 
 ## read about block_nr and survey_nr. Coerce these fields to be characters
 ## Are they important?
@@ -338,4 +345,7 @@ y <- get(state_abbrev)$patents_ld_sf$api_status
 str(y)
 table(y == "fail")
 sum(is.na(y))
+
+
+
 

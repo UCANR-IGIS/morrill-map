@@ -15,5 +15,6 @@ Acres allocated to other states
 
 Acres redeemed in other states
 
+Patentees
 
-
+generate a list of patentee names that have the word 'California' in them

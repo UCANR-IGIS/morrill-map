@@ -55,7 +55,7 @@ Hence the name ‘land grant’ institutions.
 
 # The Morrill Act Map
 
-<http://arcg.is/0Sja0L>
+<http://arcg.is/0bWLHe>
 
 **How the Map Was Made**
 

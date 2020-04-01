@@ -1,3 +1,24 @@
+
+###############
+## STATS ON THE COMBINED POLYGON LAYER (NATIONAL)
+
+comb_sf_fn <- file.path(dir_rdata, "all_patent_data.RData")
+file.exists(comb_sf_fn)
+(x <- load(comb_sf_fn))
+
+nrow(comb_sf)
+
+## Identify non-null features
+has_geom_yn <- !is.na(st_dimension(comb_sf))
+table(has_geom_yn)
+has_geom_idx <- which(has_geom_yn)
+
+# str(geom_found_idx)
+#patents_ld_good_sf <- patents_ld_sf[geom_found_idx,]
+
+
+
+#################################
 # load("patents_tbl.RData")
 # load("patents_ld_sfl.RData")
 
