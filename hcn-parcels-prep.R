@@ -87,6 +87,7 @@ dim(hcnparc_all_tbl)
 
 ## Save a copy to disk (in a native R format)
 save(hcnparc_all_tbl, file = file.path(dir_hcn_out, "hcnparc_all_tbl.RData"))
+# load(file.path(dir_hcn_out, "hcnparc_all_tbl.RData"))
 
 ## Save this table as a SQLite database (for future use)
 parc_db <- DBI::dbConnect(RSQLite::SQLite(), file.path(dir_hcn_out, "parcels.sqlite"))
@@ -116,19 +117,46 @@ hcnparc_loc_ca_tbl <- hcnparc_all_tbl %>%
   filter(Loc_State == "CA")
 
 nrow(hcnparc_loc_ca_tbl)
+## 16607
 
 ## Inner-join to attribute fields
 hcnparc_loc_ca_sf <- hcnparc_all_sf %>% 
   inner_join(hcnparc_loc_ca_tbl, by = "MTRSA_LG")
 
 dim(hcnparc_loc_ca_sf)
-## 11609  19
+## 16609  19
 
 ##################################################
-## Export those parcels located in California to a GeoJSON
+## Export those parcels located in California to GeoJSON
+## (my preferred format for uploading to AGOL, doesn't truncate field names)
 
 ## Write to GeoJSON
 st_write(obj = hcnparc_loc_ca_sf, 
          dsn = file.path(dir_hcn_out, "hcnparc_loc_ca.geojson"),
          layer = "ca_loc_parcels")
+
+##################################################
+## Subset those parcels that were transferred to CA to support 
+## the University of California
+
+hcnparc_lg_ca_tbl <- hcnparc_all_tbl %>% 
+  select(all_of( cols_keep)) %>% 
+  filter(LG_State == "CA")
+
+nrow(hcnparc_lg_ca_tbl)
+# 2395
+
+# Join the Shapefile to to the attribute table
+
+hcnparc_lg_ca_sf <- hcnparc_all_sf %>% 
+  inner_join(hcnparc_lg_ca_tbl, by = "MTRSA_LG")
+hcnparc_lg_ca_sf
+
+## Export to GeoJSON
+
+st_write(hcnparc_lg_ca_sf, 
+         dsn = file.path(dir_hcn_out, "hcnparc_lg_ca.geojson"),
+         layer = "ca_lg_parcels")
+
+
 
