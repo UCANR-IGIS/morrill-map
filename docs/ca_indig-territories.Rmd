@@ -1,0 +1,191 @@
+---
+title: "California Morril Map: Acreage Sold to Establish UC, by Tribe"
+date: "January 30, 2021"
+author: "Andy Lyons"
+output: 
+  html_document:
+    toc: yes
+    toc_depth: 1
+    toc_float: yes
+    code_folding: hide
+    includes:
+      after_body: igis-footer_embed-logo.html
+
+---
+
+```{css echo = FALSE}
+h1 {
+  font-weight:bold;
+  font-size:28px;
+  color:darkgreen;
+}
+h1.title {
+  color:black;
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Summary
+
+This report calculates the amount of land that was used to support the creation of the University of California under the [1862 Morrill Act](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"}, by Tribe.
+
+Data sources and references:
+
+* Lee, R. 2020. [How we investigated the land-grant university system](https://www.hcn.org/articles/indigenous-affairs-education-how-we-investigated-the-land-grant-university-system){target="_blank" rel="noopener"}. High Country News.  
+* Morrill Act Parcels: [https://github.com/HCNData/landgrabu-data](https://github.com/HCNData/landgrabu-data){target="_blank" rel="noopener"} ([processing script](https://github.com/ucanr-igis/morrill-map/blob/master/hcn-parcels-prep.R){target="_blank" rel="noopener"})  
+* Indigenous Territories layer: [https://native-land.ca/](https://native-land.ca/){target="_blank" rel="noopener"} ([processing script](native-land-prep.R){target="_blank" rel="noopener"})
+* Interactive web map: [http://bit.ly/ca-morrill-map](http://bit.ly/ca-morrill-map){target="_blank" rel="noopener"}  
+
+# 1. Load Packages
+
+```{r load_packages, results='hide', message=FALSE}
+library(dplyr)
+library(tmap)
+library(DT)
+library(leaflet)
+library(sf)
+library(lubridate)
+```
+
+# 2. Import the data
+
+Load the Morril Act parcels for California:
+
+```{r load_parcels, message = FALSE, cache = TRUE}
+data_dir <- "./data"
+
+## Import the data and delete duplicate rows (same geometry + attributes)
+hcnparc_ca_sf <- sf::st_read(file.path(data_dir, "hcnparc_loc_ca.geojson"), quiet = TRUE) %>% 
+  distinct(across())
+```
+
+\
+
+Load the indigenous territories that intersect California ([data source](native-land-prep.R){target="_blank" rel="noopener"}):
+
+```{r load_indigenous_territories, message = FALSE}
+territories_ca_fn <- file.path(data_dir, "territories_ca.geojson")
+
+## Import the polygons and transform the to Lat-Long NAD83 (to match the parcels)
+territories_ca_sf <- sf::st_read(territories_ca_fn, quiet = TRUE) %>% 
+  st_transform(4269)
+```
+
+\
+
+Double-check the data by mapping the parcels and territories together:
+
+```{r import_map, cache = TRUE, message = FALSE, out.width = "120%", out.height = "120%"}
+cabnd_sf <- sf::st_read(file.path(data_dir, "ca_bnd.geojson"), quiet = TRUE)
+
+tm_shape(territories_ca_sf) +
+  tm_borders(col = "gray") +
+tm_shape(hcnparc_ca_sf) +
+  tm_polygons(col = "#B22222", border.col = "#B22222") +
+tm_shape(hcnparc_ca_sf %>% filter(LG_State == "CA")) +
+  tm_polygons(col = "#196F3D", border.col = "#196F3D") +
+tm_shape(cabnd_sf) +
+  tm_borders(col = "black", lwd = 1) +
+tm_layout(main.title = "Indigenous Territories and Morril Act Parcels in CA",
+          main.title.size = 1)
+```
+
+# 3. Parcels Claimed by the State of California by Tribe
+
+Here we summarize the number and acreage of parcels that were claimed by agents of the State of California to establish UC, by Tribe. Note that due to overlap between Indigenous Territories polygons, some parcels are double-counted in this table.
+
+```{r comp_totals, cache = TRUE, message=FALSE}
+## Pull out parcels whose sale went to the State of CA, adding a unique id for the join
+uc_prcl_sf <- hcnparc_ca_sf %>% 
+  filter(LG_State == "CA") %>% 
+  mutate(unique_id = 1:n())
+
+## Do a spatial join
+uc_prcl_ge_sf <- uc_prcl_sf %>% 
+  st_join(territories_ca_sf)
+
+## Compute the number and acreage of parcels for each Tribe
+tribal_summary_tbl <- uc_prcl_ge_sf %>% 
+  st_drop_geometry() %>% 
+  group_by(Name) %>% 
+  summarise(num_parcels = n(), acreage = sum(Acres), .groups = "drop_last")
+
+DT::datatable(tribal_summary_tbl %>% 
+                filter(!is.na(Name)), 
+          class = 'row-border stripe hover compact', 
+          colnames = c("Tribe", "Number Parcels", "Acreage"),
+          width = 400,
+          rownames = F, 
+          options = list(autoWidth = TRUE,
+                         paging = FALSE,
+                         searching = FALSE,
+                         info = FALSE)) %>% 
+  formatRound(columns = "acreage", digits = 0) 
+```
+
+# 4. Explore the Map
+
+```{r}
+## Contrust the names of the tribes for each parcle
+uc_prcl_tribes_tbl <- uc_prcl_ge_sf %>% 
+  st_drop_geometry() %>% 
+  select(unique_id, Name) %>% 
+  group_by(unique_id) %>% 
+  summarise(tribes = paste(Name, collapse = "; "), .groups = "drop_last")
+
+## Add the Tribes column to uc_prcl_sf
+uc_prcl_tribes_sf <- uc_prcl_sf %>% 
+  left_join(uc_prcl_tribes_tbl, by = "unique_id")
+
+## Prepare a layer for leaflet
+uc_prcl_ge_pdt_sf <- uc_prcl_tribes_sf %>% 
+  st_transform(4326) %>% 
+  st_zm() %>% 
+  mutate(dp_year = as.integer(substr(Date_Patent,1,4)),
+         dp_month = as.integer(substr(Date_Patent,5,6)),
+         dp_day = as.integer(substr(Date_Patent,7,8))) %>% 
+  mutate(dp_dt = make_date(dp_year, dp_month, dp_day)) %>% 
+  mutate(prcl_popup = paste0("<p><b>Patentee:</b> ", Patentees, "</p>",
+                        "<p><b>Beneficiary:</b> ", University, "<br/>",
+                        "<b>Date:</b> ", format(dp_dt, "%d %B, %Y"), "<br/>",
+                        "<b>Acres:</b> ", round(Acres, 1), "<br/>",
+                        "<b>Land Desc:</b> ", MTRSA_LG, "<br/>",
+                        "<b>Tribal territory(s):</b> ", tribes, "<br/>",
+                        "<b>Source document:</b> <a href='", Parcel_Link, "'>GLO</a></p>")) %>% 
+  select(prcl_popup)
+
+## Create the leaflet object
+m <- leaflet(uc_prcl_ge_pdt_sf) %>%
+  setView(-120.4, 37.4, zoom = 7) %>% 
+  addProviderTiles("Esri.WorldGrayCanvas", group = "Gray") %>%
+  addTiles(group = "OpenStreetMap") %>% 
+  addProviderTiles("Esri.WorldImagery", group="Satellite") %>%
+  addPolygons(data = territories_ca_sf %>% st_transform(4326), 
+              fillColor = ~ color, stroke = FALSE, 
+              group = "Indigenous Territories", popup = ~ Name) %>% 
+  addPolygons(popup = ~ prcl_popup, weight = 1) %>% 
+  addLayersControl(baseGroups = c("Grayscale", "OpenStreetMap", "Satellite"),
+                   overlayGroups = c("Indigenous Territories"),
+                   options = layersControlOptions(collapsed = FALSE)) %>% 
+  hideGroup("Indigenous Territories")
+
+## Render the leaflet object
+m
+```
+
+# 5. Land Acknowledgment
+
+The following language for a land acknowledgment aims to highlight the role the 1862 Morrill Act played in transforming land that had been seized from Native Americans through [centuries of violence](https://yalebooks.yale.edu/book/9780300181364/american-genocide){target="_blank" rel="noopener"} by Spaniards, Mexicans, and Euro-Americans into an endowment for the nascent University of California. 
+
+```{r tribe_names, include = FALSE}
+tribe_names <- tribal_summary_tbl %>% 
+  filter(!is.na(Name)) %>% 
+  mutate(Name = if_else(row_number() == n(), paste0("and ", Name), Name)) %>% 
+  pull(Name)
+```
+
+<p style="color:crimson;">The University of California was established in part with the proceeds from land seized from the <em>`r paste(tribe_names, collapse=", ")`</em> tribes. Details.</p>
+

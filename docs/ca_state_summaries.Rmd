@@ -1,0 +1,104 @@
+---
+title: "California Morril Map: State Summaries"
+date: "January 30, 2021"
+author: "Andy Lyons"
+output: 
+  html_document:
+    code_folding: show
+    includes:
+      after_body: igis-footer_embed-logo.html
+
+---
+
+```{css echo = FALSE}
+h1 {
+  font-weight:bold;
+  font-size:28px;
+  color:darkgreen;
+}
+h1.title {
+  color:black;
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Summary
+
+This report calculates the amount of land that was given out in California under the 1862 Morril Act, to support the establishment of Land Grant Universities throughout the USA. For more information on the Morril Act, and the role it played in establishing public universities in the USA, see [Wikipedia](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"}.
+
+The data source for this exercise is a polygon layer of parcels that were transferred from the Federal government to public and private (mostly private) entities. For details see:
+
+* Lee, R. 2020. [How we investigated the land-grant university system](https://www.hcn.org/articles/indigenous-affairs-education-how-we-investigated-the-land-grant-university-system){target="_blank" rel="noopener"}. High Country News.  
+* Parcel layer: [https://github.com/HCNData/landgrabu-data](https://github.com/HCNData/landgrabu-data)  
+* Processing script for California: [https://github.com/UCANR-IGIS/morrill-map/blob/master/hcn-parcels-prep.R](https://github.com/UCANR-IGIS/morrill-map/blob/master/hcn-parcels-prep.R){target="_blank" rel="noopener"}  
+* Interactive web map: [http://bit.ly/ca-morrill-map](http://bit.ly/ca-morrill-map){target="_blank" rel="noopener"}  
+
+# 1. Load Packages
+
+```{r load_packages, results='hide', message=FALSE}
+library(DT)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(tmap)
+library(leaflet)   
+library(crosstalk)  
+```
+
+# 2. Import the data
+
+```{r load_parcels, message = FALSE}
+## Load the Morril Act parcels for California:
+data_dir <- "./data"
+hcnparc_ca_sf <- sf::st_read(file.path(data_dir, "hcnparc_loc_ca.geojson"), quiet = TRUE)
+```
+
+\
+
+Map:
+
+```{r import_map, cache = TRUE, message = FALSE, out.width = "120%", out.height = "120%"}
+cabnd_sf <- sf::st_read(file.path(data_dir, "ca_bnd.geojson"), quiet = TRUE)
+
+tm_shape(cabnd_sf) +
+  tm_borders(col = "black", lwd = 1) +
+tm_shape(hcnparc_ca_sf) +
+  tm_polygons(col = "#B22222", border.col = "#B22222") +
+tm_layout(main.title = "Parcels in California Transferred Under the 1862 Morril Act",
+          main.title.size = 0.8)
+
+```
+
+# 3. Number of parcels and acreage by State
+
+
+```{r comp_totals, cache = TRUE, message=FALSE}
+state_totals_tbl <- hcnparc_ca_sf %>% 
+  st_drop_geometry() %>% 
+  group_by(LG_State) %>% 
+  summarise(Num_Parcels = n(), Total_acres = sum(Acres))
+  
+DT::datatable(state_totals_tbl, 
+          class = 'row-border stripe hover compact', 
+          colnames = c("State", "Number Parcels", "Total Area (acres)"),
+          width = 400,
+          rownames = F, 
+          options = list(autoWidth = TRUE,
+                         paging = FALSE,
+                         searching = FALSE,
+                         info = FALSE)) %>% 
+  formatRound(columns = "Total_acres", digits = 0) 
+```
+
+```{r plot_by_state, cache = TRUE}
+ggplot(data = state_totals_tbl, 
+       aes(x = Total_acres, y = reorder(LG_State, Total_acres))) + 
+  geom_bar(stat="identity") +
+  xlab("Acres") +
+  ylab("State Proceeds Went To") +
+  ggtitle("Parcels in California Transferred Under the 1862 Morril Act") +
+  scale_x_continuous(labels = scales::comma)
+```
