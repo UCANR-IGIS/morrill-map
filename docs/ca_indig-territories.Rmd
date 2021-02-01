@@ -1,5 +1,5 @@
 ---
-title: "California Morril Map: Acreage Sold to Establish UC, by Tribe"
+title: "California Morrill Map: Allocations for the UC Endowment by Tribal Group"
 date: "January 30, 2021"
 author: "Andy Lyons"
 output: 
@@ -7,7 +7,7 @@ output:
     toc: yes
     toc_depth: 1
     toc_float: yes
-    code_folding: hide
+    code_folding: show
     includes:
       after_body: igis-footer_embed-logo.html
 
@@ -30,7 +30,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Summary
 
-This report calculates the amount of land that was used to support the creation of the University of California under the [1862 Morrill Act](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"}, by Tribe.
+This analysis summarizes the 150,000 acres of land that was transferred from the Federal Government to the State of California under the [1862 Morrill Act](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"} to support the establishment of the University of California. The distribution and acreage of land is broken down by the Native American tribal groups from whom the land had be seized. 
 
 Data sources and references:
 
@@ -48,11 +48,13 @@ library(DT)
 library(leaflet)
 library(sf)
 library(lubridate)
+library(leaflet.providers)
+library(leaflet.extras)
 ```
 
 # 2. Import the data
 
-Load the Morril Act parcels for California:
+Load the Morrill Act parcels for California:
 
 ```{r load_parcels, message = FALSE, cache = TRUE}
 data_dir <- "./data"
@@ -64,7 +66,7 @@ hcnparc_ca_sf <- sf::st_read(file.path(data_dir, "hcnparc_loc_ca.geojson"), quie
 
 \
 
-Load the indigenous territories that intersect California ([data source](native-land-prep.R){target="_blank" rel="noopener"}):
+Load the indigenous territories that intersect California ([data source](https://native-land.ca/){target="_blank" rel="noopener"}):
 
 ```{r load_indigenous_territories, message = FALSE}
 territories_ca_fn <- file.path(data_dir, "territories_ca.geojson")
@@ -90,21 +92,21 @@ tm_shape(hcnparc_ca_sf %>% filter(LG_State == "CA")) +
 tm_shape(cabnd_sf) +
   tm_borders(col = "black", lwd = 1) +
 tm_layout(main.title = "Indigenous Territories and Morril Act Parcels in CA",
-          main.title.size = 1)
+          main.title.size = 0.8)
 ```
 
-# 3. Parcels Claimed by the State of California by Tribe
+# 3. Tabulate Parcels by Tribe
 
-Here we summarize the number and acreage of parcels that were claimed by agents of the State of California to establish UC, by Tribe. Note that due to overlap between Indigenous Territories polygons, some parcels are double-counted in this table.
+Here we summarize the number and acreage of parcels that were claimed by agents of the State of California to establish UC according to the original occupants. Note that due to overlap between Indigenous Territories, some parcels are double-counted in this table.
 
-```{r comp_totals, cache = TRUE, message=FALSE}
+```{r comp_totals, message=FALSE}
 ## Pull out parcels whose sale went to the State of CA, adding a unique id for the join
 uc_prcl_sf <- hcnparc_ca_sf %>% 
   filter(LG_State == "CA") %>% 
   mutate(unique_id = 1:n())
 
 ## Do a spatial join
-uc_prcl_ge_sf <- uc_prcl_sf %>% 
+uc_prcl_ge_sf <- uc_prcl_sf %>%   ## 4269
   st_join(territories_ca_sf)
 
 ## Compute the number and acreage of parcels for each Tribe
@@ -117,8 +119,8 @@ DT::datatable(tribal_summary_tbl %>%
                 filter(!is.na(Name)), 
           class = 'row-border stripe hover compact', 
           colnames = c("Tribe", "Number Parcels", "Acreage"),
-          width = 400,
-          rownames = F, 
+          width = 500,
+          rownames = T, 
           options = list(autoWidth = TRUE,
                          paging = FALSE,
                          searching = FALSE,
@@ -128,8 +130,10 @@ DT::datatable(tribal_summary_tbl %>%
 
 # 4. Explore the Map
 
+The map below shows the parcels of public (federal) land claimed by the State of California under the Morrill Act to support the establishment of UC. Click on a parcel to view more info about it. 
+
 ```{r}
-## Contrust the names of the tribes for each parcle
+## Construct the names of the tribes for each parcel
 uc_prcl_tribes_tbl <- uc_prcl_ge_sf %>% 
   st_drop_geometry() %>% 
   select(unique_id, Name) %>% 
@@ -159,26 +163,27 @@ uc_prcl_ge_pdt_sf <- uc_prcl_tribes_sf %>%
 
 ## Create the leaflet object
 m <- leaflet(uc_prcl_ge_pdt_sf) %>%
-  setView(-120.4, 37.4, zoom = 7) %>% 
   addProviderTiles("Esri.WorldGrayCanvas", group = "Gray") %>%
-  addTiles(group = "OpenStreetMap") %>% 
+  addTiles(group = "OpenStreetMap") %>%
   addProviderTiles("Esri.WorldImagery", group="Satellite") %>%
-  addPolygons(data = territories_ca_sf %>% st_transform(4326), 
-              fillColor = ~ color, stroke = FALSE, 
-              group = "Indigenous Territories", popup = ~ Name) %>% 
-  addPolygons(popup = ~ prcl_popup, weight = 1) %>% 
+  addPolygons(data = territories_ca_sf %>% st_transform(4326),
+              fillColor = ~ color, stroke = FALSE,
+              group = "Indigenous Territories", popup = ~ Name) %>%
+  addPolygons(popup = ~ prcl_popup, weight = 1) %>%
+  addPolylines(data = cabnd_sf %>% st_transform(4326),
+               weight = 2, color = "#111") %>% 
   addLayersControl(baseGroups = c("Grayscale", "OpenStreetMap", "Satellite"),
                    overlayGroups = c("Indigenous Territories"),
                    options = layersControlOptions(collapsed = FALSE)) %>% 
-  hideGroup("Indigenous Territories")
-
+  setView(-120.4, 37.4, zoom = 6)
+  
 ## Render the leaflet object
 m
 ```
 
-# 5. Land Acknowledgment
+# 5. A Morrill Act Land Acknowledgment
 
-The following language for a land acknowledgment aims to highlight the role the 1862 Morrill Act played in transforming land that had been seized from Native Americans through [centuries of violence](https://yalebooks.yale.edu/book/9780300181364/american-genocide){target="_blank" rel="noopener"} by Spaniards, Mexicans, and Euro-Americans into an endowment for the nascent University of California. 
+The statement below aims to be a more inclusive Land Acknowledgment by acknowledging the role the 1862 Morrill Act played in transforming land that had been seized from Native Americans through [centuries of violent occupation](https://yalebooks.yale.edu/book/9780300181364/american-genocide){target="_blank" rel="noopener"} by Spaniards, Mexicans, and Euro-Americans, into an endowment for the nascent University of California. 
 
 ```{r tribe_names, include = FALSE}
 tribe_names <- tribal_summary_tbl %>% 
@@ -187,5 +192,12 @@ tribe_names <- tribal_summary_tbl %>%
   pull(Name)
 ```
 
-<p style="color:crimson;">The University of California was established in part with the proceeds from land seized from the <em>`r paste(tribe_names, collapse=", ")`</em> tribes. Details.</p>
+\
 
+<p style="font-size:130%; margin:0 2em;">The University of California was established in part with the proceeds from land seized from the <em>`r paste(tribe_names, collapse=", ")`</em> tribes. [Details](https://ucanr-igis.github.io/morrill-map/ca_indig-territories.html).</p>
+
+\
+
+*Please email for [questions and feedback](mailto:andlyons@ucanr.edu?subject=Morrill Map).*
+
+\
