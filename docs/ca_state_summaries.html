@@ -302,6 +302,9 @@ h1.title {
   color:black;
 }
 </style>
+<p style="text-align:center; font-weight:bold; font-style:italic; color:black; font-size:120%; background-color:#DDD;">
+DRAFT
+</p>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
 <p>This analysis tabulates the amount of land that was given out in California under the 1862 Morrill Act, to support the establishment of Land Grant Universities throughout the US. For more information on the Morrill Act, and the role it played in establishing public universities in the US, see <a href="https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts" target="_blank" rel="noopener">Wikipedia</a>.</p>
@@ -321,6 +324,7 @@ h1.title {
 <pre class="r"><code>library(DT)
 library(dplyr)
 library(ggplot2)
+library(sf)
 library(scales)
 library(tmap)
 library(leaflet)   

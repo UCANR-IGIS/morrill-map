@@ -29,6 +29,8 @@ h1.title {
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+<p style="text-align:center; font-weight:bold; font-style:italic; color:black; font-size:120%; background-color:#DDD;">DRAFT</p>
+
 # Summary
 
 This analysis tabulates the amount of land that was given out in California under the 1862 Morrill Act, to support the establishment of Land Grant Universities throughout the US. For more information on the Morrill Act, and the role it played in establishing public universities in the US, see [Wikipedia](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"}.
@@ -46,6 +48,7 @@ The data source for this exercise is a polygon layer of parcels that were transf
 library(DT)
 library(dplyr)
 library(ggplot2)
+library(sf)
 library(scales)
 library(tmap)
 library(leaflet)   
@@ -111,3 +114,4 @@ ggplot(data = state_totals_tbl,
 *Please email for [questions and feedback](mailto:andlyons@ucanr.edu?subject=Morrill Map).*
 
 \
+
