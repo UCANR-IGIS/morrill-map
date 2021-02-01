@@ -8,9 +8,10 @@ output:
     toc_depth: 1
     toc_float: yes
     code_folding: show
+    lib_dir: lib
+    self_contained: no
     includes:
       after_body: igis-footer_embed-logo.html
-
 ---
 
 ```{css echo = FALSE}

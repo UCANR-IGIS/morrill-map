@@ -4,13 +4,14 @@ date: "January 30, 2021"
 author: "Andy Lyons"
 output: 
   html_document:
+    code_folding: show
+    lib_dir: lib
+    self_contained: no
     toc: yes
     toc_depth: 1
     toc_float: yes
-    code_folding: show
     includes:
       after_body: igis-footer_embed-logo.html
-
 ---
 
 ```{css echo = FALSE}
@@ -30,7 +31,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Summary
 
-This report calculates the amount of land that was given out in California under the 1862 Morrill Act, to support the establishment of Land Grant Universities throughout the USA. For more information on the Morrill Act, and the role it played in establishing public universities in the USA, see [Wikipedia](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"}.
+This analysis tabulates the amount of land that was given out in California under the 1862 Morrill Act, to support the establishment of Land Grant Universities throughout the US. For more information on the Morrill Act, and the role it played in establishing public universities in the US, see [Wikipedia](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"}.
 
 The data source for this exercise is a polygon layer of parcels that were transferred from the Federal government to public and private (mostly private) entities. For details see:
 
@@ -61,7 +62,7 @@ hcnparc_ca_sf <- sf::st_read(file.path(data_dir, "hcnparc_loc_ca.geojson"), quie
 
 \
 
-Map:
+Cross-check the parcel data by mapping it:
 
 ```{r import_map, cache = TRUE, message = FALSE, out.width = "120%", out.height = "120%"}
 cabnd_sf <- sf::st_read(file.path(data_dir, "ca_bnd.geojson"), quiet = TRUE)
@@ -77,6 +78,7 @@ tm_layout(main.title = "Parcels in California Transferred Under the 1862 Morrill
 
 # 3. Number of parcels and acreage by State
 
+The majority of land in California transferred from Federal to private ownership under the Morrill Act actually went to benefit public universities in other States. States like New York received a large allotment of land (which was distributed according to population), but 
 
 ```{r comp_totals, cache = TRUE, message=FALSE}
 state_totals_tbl <- hcnparc_ca_sf %>% 
@@ -108,3 +110,4 @@ ggplot(data = state_totals_tbl,
 
 *Please email for [questions and feedback](mailto:andlyons@ucanr.edu?subject=Morrill Map).*
 
+\
