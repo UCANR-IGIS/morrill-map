@@ -11,6 +11,7 @@ output:
     lib_dir: lib
     self_contained: no
     includes:
+      in_header: gtag_morril-map.js
       after_body: igis-footer_embed-logo.html
 ---
 
@@ -33,7 +34,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Summary
 
-This analysis summarizes the ~150,000 acres of land that was transferred from the Federal Government to the State of California under the [1862 Morrill Act](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"} to support the establishment of the University of California. The distribution and acreage of land is broken down by the Native American tribal groups from whom the land had be seized. 
+This notebook summarizes the ~150,000 acres of land that was transferred from the Federal Government to the State of California under the [1862 Morrill Act](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"} to support the establishment of the University of California. The distribution and acreage of land is broken down by the Native American tribal groups from whom the land had be seized. 
 
 Data sources and references:
 

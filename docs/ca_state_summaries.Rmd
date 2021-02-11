@@ -11,6 +11,7 @@ output:
     toc_depth: 1
     toc_float: yes
     includes:
+      in_header: gtag_morril-map.js
       after_body: igis-footer_embed-logo.html
 ---
 
@@ -33,7 +34,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Summary
 
-This analysis tabulates the amount of land that was given out in California under the 1862 Morrill Act, to support the establishment of Land Grant Universities throughout the US. For more information on the Morrill Act, and the role it played in establishing public universities in the US, see [Wikipedia](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"}.
+This notebook examines the amount of land that was given out in California under the 1862 Morrill Act, to support the establishment of Land Grant Universities throughout the US. The number of parcels and acreage is totaled for each state which received land under the Morril Act (i.e., California), or whose land scrip was redeemed in California (everyone else). For more information on the Morrill Act, and the role it played in establishing public universities in the US, see [Wikipedia](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"}.
 
 The data source for this exercise is a polygon layer of parcels that were transferred from the Federal government to public and private (mostly private) entities. For details see:
 

@@ -16,7 +16,7 @@
 <title>California Morrill Map: Allocations for the UC Endowment by Tribal Group</title>
 
 <script src="lib/header-attrs-2.6/header-attrs.js"></script>
-<script src="lib/jquery-1.12.4/jquery.min.js"></script>
+<script src="lib/jquery-3.5.1/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="lib/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 <script src="lib/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -35,8 +35,8 @@
 <link href="lib/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
 <link href="lib/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
 <script src="lib/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
-<link href="lib/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
-<script src="lib/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<link href="lib/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+<script src="lib/crosstalk-1.1.1/js/crosstalk.min.js"></script>
 <link href="lib/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
 <script src="lib/leaflet-1.3.1/leaflet.js"></script>
 <link href="lib/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
@@ -46,6 +46,15 @@
 <script src="lib/leaflet-binding-2.0.4.1/leaflet.js"></script>
 <script src="lib/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
 <script src="lib/leaflet-providers-plugin-2.0.4.1/leaflet-providers-plugin.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KRRNGZ1HSJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-KRRNGZ1HSJ');
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -316,7 +325,7 @@ DRAFT
 </p>
 <div id="summary" class="section level1">
 <h1>Summary</h1>
-<p>This analysis summarizes the ~150,000 acres of land that was transferred from the Federal Government to the State of California under the <a href="https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts" target="_blank" rel="noopener">1862 Morrill Act</a> to support the establishment of the University of California. The distribution and acreage of land is broken down by the Native American tribal groups from whom the land had be seized.</p>
+<p>This notebook summarizes the ~150,000 acres of land that was transferred from the Federal Government to the State of California under the <a href="https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts" target="_blank" rel="noopener">1862 Morrill Act</a> to support the establishment of the University of California. The distribution and acreage of land is broken down by the Native American tribal groups from whom the land had be seized.</p>
 <p>Data sources and references:</p>
 <ul>
 <li>Lee, R. 2020. <a href="https://www.hcn.org/articles/indigenous-affairs-education-how-we-investigated-the-land-grant-university-system" target="_blank" rel="noopener">How we investigated the land-grant university system</a>. High Country News.<br />
