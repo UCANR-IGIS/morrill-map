@@ -15,16 +15,22 @@
 
 <title>California Morrill Map: State Summaries</title>
 
-<script src="lib/header-attrs-2.6/header-attrs.js"></script>
-<script src="lib/jquery-1.12.4/jquery.min.js"></script>
+<script src="lib/header-attrs-2.7/header-attrs.js"></script>
+<script src="lib/jquery-3.5.1/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="lib/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 <script src="lib/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="lib/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="lib/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="lib/jqueryui-1.11.4/jquery-ui.min.js"></script>
-<link href="lib/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="lib/tocify-1.9.1/jquery.tocify.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="lib/navigation-1.1/tabsets.js"></script>
 <script src="lib/navigation-1.1/codefolding.js"></script>
 <link href="lib/highlightjs-9.12.0/default.css" rel="stylesheet" />
@@ -35,8 +41,14 @@
 <link href="lib/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
 <link href="lib/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
 <script src="lib/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
-<link href="lib/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
-<script src="lib/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<link href="lib/dt-ext-buttons-1.10.20/css/buttons.dataTables.min.css" rel="stylesheet" />
+<script src="lib/dt-ext-buttons-1.10.20/js/dataTables.buttons.min.js"></script>
+<script src="lib/dt-ext-buttons-1.10.20/js/buttons.flash.min.js"></script>
+<script src="lib/dt-ext-buttons-1.10.20/js/buttons.html5.min.js"></script>
+<script src="lib/dt-ext-buttons-1.10.20/js/buttons.colVis.min.js"></script>
+<script src="lib/dt-ext-buttons-1.10.20/js/buttons.print.min.js"></script>
+<link href="lib/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+<script src="lib/crosstalk-1.1.1/js/crosstalk.min.js"></script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KRRNGZ1HSJ"></script>
 <script>
@@ -57,11 +69,6 @@
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -74,32 +81,6 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
 
 
 
@@ -110,10 +91,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -130,6 +107,9 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+pre code {
+  padding: 0;
+}
 </style>
 
 
@@ -142,7 +122,6 @@ summary {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -198,69 +177,6 @@ summary {
 
 
 
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
-
-
 
 </head>
 
@@ -270,23 +186,13 @@ div.tocify {
 <div class="container-fluid main-container">
 
 
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
+<div id="header">
 
-
-<div class="fluid-row" id="header">
-
-<div class="btn-group pull-right">
-<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-<ul class="dropdown-menu" style="min-width: 50px;">
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
 <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
 <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
 </ul>
@@ -300,6 +206,13 @@ div.tocify {
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#distribution-of-morrill-act-parcels-within-california">Distribution of Morrill Act Parcels within California</a></li>
+<li><a href="#number-of-parcels-and-acreage-by-state">Number of parcels and acreage by State</a></li>
+</ul>
+</div>
 
 <style type="text/css">
 h1 {
@@ -310,13 +223,16 @@ h1 {
 h1.title {
   color:black;
 }
+div.dt-buttons {
+  margin-top:0.5em;
+}
 </style>
-<p style="text-align:center; font-weight:bold; font-style:italic; color:black; font-size:120%; background-color:#DDD;">
-DRAFT
-</p>
+<!--- 
+<p style="text-align:center; font-weight:bold; font-style:italic; color:black; font-size:120%; background-color:#DDD;">DRAFT</p>
+--->
 <div id="summary" class="section level1">
 <h1>Summary</h1>
-<p>This notebook examines the amount of land that was given out in California under the 1862 Morrill Act, to support the establishment of Land Grant Universities throughout the US. The number of parcels and acreage is totaled for each state which received land under the Morril Act (i.e., California), or whose land scrip was redeemed in California (everyone else). For more information on the Morrill Act, and the role it played in establishing public universities in the US, see <a href="https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts" target="_blank" rel="noopener">Wikipedia</a>.</p>
+<p>This notebook examines the amount of land that was given out in California under the 1862 Morrill Act, to support the establishment of Land Grant Universities throughout the US. The number of parcels and acreage is totaled for each state which received land in California under the Morrill Act either directly (i.e., California) or as land scrip that was given to other states and ultimately redeemed in California. For more information on the Morrill Act, and the role it played in establishing public universities in the US, see <a href="https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts" target="_blank" rel="noopener">Wikipedia</a>.</p>
 <p>The data source for this exercise is a polygon layer of parcels that were transferred from the Federal government to public and private (mostly private) entities. For details see:</p>
 <ul>
 <li>Lee, R. 2020. <a href="https://www.hcn.org/articles/indigenous-affairs-education-how-we-investigated-the-land-grant-university-system" target="_blank" rel="noopener">How we investigated the land-grant university system</a>. High Country News.<br />
@@ -327,56 +243,70 @@ DRAFT
 </li>
 <li>Interactive web map: <a href="http://bit.ly/ca-morrill-map" target="_blank" rel="noopener">http://bit.ly/ca-morrill-map</a></li>
 </ul>
-</div>
-<div id="load-packages" class="section level1">
-<h1>1. Load Packages</h1>
-<pre class="r"><code>library(DT)
+<p>Click the ‘Code’ button to the right to view how the map data was imported.</p>
+<pre class="r"><code># Load Packages
 library(dplyr)
 library(ggplot2)
 library(sf)
-library(scales)
 library(tmap)
-library(leaflet)   
-library(crosstalk)  </code></pre>
-</div>
-<div id="import-the-data" class="section level1">
-<h1>2. Import the data</h1>
-<pre class="r"><code>## Load the Morrill Act parcels for California:
+library(DT)
+# library(scales)
+# library(leaflet)   
+# library(crosstalk) 
+
+## Load the Morrill Act parcels for California:
 data_dir &lt;- &quot;./data&quot;
-hcnparc_ca_sf &lt;- sf::st_read(file.path(data_dir, &quot;hcnparc_loc_ca.geojson&quot;), quiet = TRUE)</code></pre>
+hcnparc_ca_sf &lt;- sf::st_read(file.path(data_dir, &quot;hcnparc_loc_ca.geojson&quot;), quiet = TRUE)
+
+## Import the California boundary
+cabnd_sf &lt;- sf::st_read(file.path(data_dir, &quot;ca_bnd.geojson&quot;), quiet = TRUE)</code></pre>
 <p><br />
 </p>
-<p>Cross-check the parcel data by mapping it:</p>
-<pre class="r"><code>cabnd_sf &lt;- sf::st_read(file.path(data_dir, &quot;ca_bnd.geojson&quot;), quiet = TRUE)
-
-tm_shape(cabnd_sf) +
+</div>
+<div id="distribution-of-morrill-act-parcels-within-california" class="section level1">
+<h1>Distribution of Morrill Act Parcels within California</h1>
+<pre class="r"><code>tm_shape(cabnd_sf) +
   tm_borders(col = &quot;black&quot;, lwd = 1) +
 tm_shape(hcnparc_ca_sf) +
   tm_polygons(col = &quot;#B22222&quot;, border.col = &quot;#B22222&quot;) +
 tm_layout(main.title = &quot;Parcels in California Transferred Under the 1862 Morrill Act&quot;,
           main.title.size = 0.8)</code></pre>
 <p><img src="ca_state_summaries_files/figure-html/import_map-1.png" width="120%" height="120%" /></p>
+<p><em>For an interactive version of this map, please visit <a href="http://bit.ly/ca-morrill-map" target="_blank" rel="noopener">http://bit.ly/ca-morrill-map</a>.</em></p>
 </div>
 <div id="number-of-parcels-and-acreage-by-state" class="section level1">
-<h1>3. Number of parcels and acreage by State</h1>
-<p>The majority of land in California transferred from Federal to private ownership under the Morrill Act actually went to benefit public universities in other States. States like New York received a large allotment of land (which was distributed according to population), but</p>
-<pre class="r"><code>state_totals_tbl &lt;- hcnparc_ca_sf %&gt;% 
+<h1>Number of parcels and acreage by State</h1>
+<p>The majority of land transferred in California from Federal public to private ownership under the Morrill Act went to benefit public universities in 26 other states. Only 8.5% of the 1.7m acres ultimately transferred went to support the University of California endowment.</p>
+<p>The reason for this is because under the act land was distributed according to the number of Congressional representatives. Hence states like New York with large populations got a large allotment of land. States that didn’t have sufficient amounts of Federal public land within their own borders were instead given ‘coupons’ (<a href="https://en.wikipedia.org/wiki/Scrip#Land_scrip_(United_States)" target="_blank" rel="noopener">Land scrip</a>), that could be redeemed anywhere in the US. They were required to sell these coupons on the open market to fund endowments for their nascent land grant universities. California was a popular state for homesteaders and land speculators to redeem their land scrip due to its large holdings of public land, fertile agricultural areas, and rich timber resources.</p>
+<pre class="r"><code>all_acres &lt;- sum(hcnparc_ca_sf$Acres) 
+
+state_totals_tbl &lt;- hcnparc_ca_sf %&gt;% 
   st_drop_geometry() %&gt;% 
   group_by(LG_State) %&gt;% 
-  summarise(Num_Parcels = n(), Total_acres = sum(Acres))
-  
-DT::datatable(state_totals_tbl, 
-          class = &#39;row-border stripe hover compact&#39;, 
-          colnames = c(&quot;State&quot;, &quot;Number Parcels&quot;, &quot;Total Area (acres)&quot;),
-          width = 400,
-          rownames = F, 
-          options = list(autoWidth = TRUE,
-                         paging = FALSE,
-                         searching = FALSE,
-                         info = FALSE)) %&gt;% 
-  formatRound(columns = &quot;Total_acres&quot;, digits = 0) </code></pre>
-<div id="htmlwidget-03915e2cc4445cb51a7e" style="width:400px;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-03915e2cc4445cb51a7e">{"x":{"filter":"none","data":[["AL","AR","CA","CT","DE","FL","GA","IL","IN","KY","LA","MA","MD","ME","MS","NC","NJ","NV","NY","OH","PA","SC","TN","TX","unidentified","VA","VT","WV"],[917,1138,2419,42,211,352,1040,947,17,15,1039,421,33,7,558,1328,11,8,1809,75,247,524,903,876,1,1642,23,6],[88074.12999998,101169.41599796,150135.37101538,5273.25,19658.51333331,31353.53999998,96137.81999997,130964.21999999,2747.8,1627.88,87849.15000007,65483.13,4836.71,800,44995.48000004,211567.62,1760,360.88,273569.99000001,9788.79,32019.04,50865.83999998,124297.83000001,76850.80999996,155.6,146185.57999997,3677.39,480]],"container":"<table class=\"row-border stripe hover compact\">\n  <thead>\n    <tr>\n      <th>State<\/th>\n      <th>Number Parcels<\/th>\n      <th>Total Area (acres)<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"autoWidth":true,"paging":false,"searching":false,"info":false,"columnDefs":[{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 0, 3, \",\", \".\");\n  }"},{"className":"dt-right","targets":[1,2]}],"order":[],"orderClasses":false}},"evals":["options.columnDefs.0.render"],"jsHooks":[]}</script>
+  summarise(Num_Parcels = n(), Total_acres = sum(Acres)) %&gt;% 
+  mutate(Percent_total_acreage = 100 * round(Total_acres / all_acres, 3))
+
+DT::datatable(state_totals_tbl,
+              colnames = c(&quot;State&quot;, &quot;Number Parcels&quot;, 
+                           &quot;Total Area (acres)&quot;, &quot;Prcnt Total Acres&quot;),
+              extensions = &#39;Buttons&#39;,
+              width = 600,
+              rownames = TRUE, 
+              options = list(paging = FALSE,
+                             searching = FALSE,
+                             info = FALSE,
+                             fixedColumns = TRUE,
+                             autoWidth = TRUE,
+                             ordering = TRUE,
+                             dom = &#39;tB&#39;,
+                             buttons = c(&#39;copy&#39;, &#39;csv&#39;)
+                            ),
+              class = &quot;display&quot;
+            ) %&gt;% 
+   formatRound(columns = &quot;Total_acres&quot;, digits = 0)</code></pre>
+<div id="htmlwidget-3068d04940f17aafc52b" style="width:600px;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3068d04940f17aafc52b">{"x":{"filter":"none","extensions":["Buttons"],"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28"],["AL","AR","CA","CT","DE","FL","GA","IL","IN","KY","LA","MA","MD","ME","MS","NC","NJ","NV","NY","OH","PA","SC","TN","TX","unidentified","VA","VT","WV"],[917,1138,2419,42,211,352,1040,947,17,15,1039,421,33,7,558,1328,11,8,1809,75,247,524,903,876,1,1642,23,6],[88074.12999998,101169.41599796,150135.37101538,5273.25,19658.51333331,31353.53999998,96137.81999997,130964.21999999,2747.8,1627.88,87849.15000007,65483.13,4836.71,800,44995.48000004,211567.62,1760,360.88,273569.99000001,9788.79,32019.04,50865.83999998,124297.83000001,76850.80999996,155.6,146185.57999997,3677.39,480],[5,5.7,8.5,0.3,1.1,1.8,5.5,7.4,0.2,0.1,5,3.7,0.3,0,2.6,12,0.1,0,15.5,0.6,1.8,2.9,7.1,4.4,0,8.3,0.2,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>State<\/th>\n      <th>Number Parcels<\/th>\n      <th>Total Area (acres)<\/th>\n      <th>Prcnt Total Acres<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"paging":false,"searching":false,"info":false,"fixedColumns":true,"autoWidth":true,"ordering":true,"dom":"tB","buttons":["copy","csv"],"columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 0, 3, \",\", \".\");\n  }"},{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false}},"evals":["options.columnDefs.0.render"],"jsHooks":[]}</script>
+<p>Acreage by state in descending order:</p>
 <pre class="r"><code>ggplot(data = state_totals_tbl, 
        aes(x = Total_acres, y = reorder(LG_State, Total_acres))) + 
   geom_bar(stat=&quot;identity&quot;) +
@@ -385,11 +315,30 @@ DT::datatable(state_totals_tbl,
   ggtitle(&quot;Parcels in California Transferred Under the 1862 Morrill Act&quot;) +
   scale_x_continuous(labels = scales::comma)</code></pre>
 <p><img src="ca_state_summaries_files/figure-html/plot_by_state-1.png" width="672" /></p>
+<!---
+Percent of Morrill Act acreage in California that went to support the UC endowment:
+
+acres_ca <- state_totals_tbl %>% 
+  filter(LG_State == "CA") %>% 
+  pull(Total_acres) %>% 
+  sum()
+
+acres_notca <- state_totals_tbl %>% 
+  filter(LG_State != "CA") %>% 
+  pull(Total_acres) %>% 
+  sum()
+
+scales::label_percent(accuracy = 0.01)(acres_ca / (acres_ca + acres_notca))
+
+--->
+<hr/>
 <p><em>Please email for <a href="mailto:andlyons@ucanr.edu?subject=Morrill%20Map">questions and feedback</a>.</em></p>
-<p><br />
-</p>
 </div>
 
+<script src='https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.js'></script>
+<script>
+    anchors.add('h1');
+</script>
 <div style="padding:1em 0; border-top:none;">
 <a href="http://igis.ucanr.edu/" target="_blank" rel="noopener">
 <img src="data:image/png;base64,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" width="550" height="58"/>
@@ -397,8 +346,6 @@ DT::datatable(state_totals_tbl,
 </div>
 
 
-</div>
-</div>
 
 </div>
 
@@ -424,7 +371,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -432,36 +379,10 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeCodeFolding("show" === "show");
+  window.initializeCodeFolding("hide" === "show");
 });
 </script>
 
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

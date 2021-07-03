@@ -4,15 +4,15 @@ date: "January 30, 2021"
 author: "Andy Lyons"
 output: 
   html_document:
-    code_folding: show
+    code_folding: hide
     lib_dir: lib
     self_contained: no
     toc: yes
     toc_depth: 1
-    toc_float: yes
+    toc_float: no
     includes:
       in_header: gtag_morril-map.js
-      after_body: igis-footer_embed-logo.html
+      after_body: igis-footer_embed-logo-anchors.html
 ---
 
 ```{css echo = FALSE}
@@ -24,85 +24,110 @@ h1 {
 h1.title {
   color:black;
 }
+div.dt-buttons {
+  margin-top:0.5em;
+}
 ```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(DT)
+
+# Load dependencies for DT
+## DT::datatable(matrix(), extensions = 'Buttons', class = "display")
+
 ```
 
+<!--- 
 <p style="text-align:center; font-weight:bold; font-style:italic; color:black; font-size:120%; background-color:#DDD;">DRAFT</p>
+--->
 
 # Summary
 
-This notebook examines the amount of land that was given out in California under the 1862 Morrill Act, to support the establishment of Land Grant Universities throughout the US. The number of parcels and acreage is totaled for each state which received land under the Morril Act (i.e., California), or whose land scrip was redeemed in California (everyone else). For more information on the Morrill Act, and the role it played in establishing public universities in the US, see [Wikipedia](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"}.
+This notebook examines the amount of land that was given out in California under the 1862 Morrill Act, to support the establishment of Land Grant Universities throughout the US. The number of parcels and acreage is totaled for each state which received land in California under the Morrill Act either directly (i.e., California) or as land scrip that was given to other states and ultimately redeemed in California. For more information on the Morrill Act, and the role it played in establishing public universities in the US, see [Wikipedia](https://en.wikipedia.org/wiki/Morrill_Land-Grant_Acts){target="_blank" rel="noopener"}.
 
 The data source for this exercise is a polygon layer of parcels that were transferred from the Federal government to public and private (mostly private) entities. For details see:
 
 * Lee, R. 2020. [How we investigated the land-grant university system](https://www.hcn.org/articles/indigenous-affairs-education-how-we-investigated-the-land-grant-university-system){target="_blank" rel="noopener"}. High Country News.  
 * Parcel layer: [https://github.com/HCNData/landgrabu-data](https://github.com/HCNData/landgrabu-data)  
 * Processing script for California: [https://github.com/UCANR-IGIS/morrill-map/blob/master/hcn-parcels-prep.R](https://github.com/UCANR-IGIS/morrill-map/blob/master/hcn-parcels-prep.R){target="_blank" rel="noopener"}  
-* Interactive web map: [http://bit.ly/ca-morrill-map](http://bit.ly/ca-morrill-map){target="_blank" rel="noopener"}  
+* Interactive web map: [http://bit.ly/ca-morrill-map](http://bit.ly/ca-morrill-map){target="_blank" rel="noopener"}
 
-# 1. Load Packages
+Click the 'Code' button to the right to view how the map data was imported. 
 
 ```{r load_packages, results='hide', message=FALSE}
-library(DT)
+# Load Packages
 library(dplyr)
 library(ggplot2)
 library(sf)
-library(scales)
 library(tmap)
-library(leaflet)   
-library(crosstalk)  
-```
+library(DT)
+# library(scales)
+# library(leaflet)   
+# library(crosstalk) 
 
-# 2. Import the data
-
-```{r load_parcels, message = FALSE}
 ## Load the Morrill Act parcels for California:
 data_dir <- "./data"
 hcnparc_ca_sf <- sf::st_read(file.path(data_dir, "hcnparc_loc_ca.geojson"), quiet = TRUE)
+
+## Import the California boundary
+cabnd_sf <- sf::st_read(file.path(data_dir, "ca_bnd.geojson"), quiet = TRUE)
 ```
 
 \
 
-Cross-check the parcel data by mapping it:
+# Distribution of Morrill Act Parcels within California
 
 ```{r import_map, cache = TRUE, message = FALSE, out.width = "120%", out.height = "120%"}
-cabnd_sf <- sf::st_read(file.path(data_dir, "ca_bnd.geojson"), quiet = TRUE)
-
 tm_shape(cabnd_sf) +
   tm_borders(col = "black", lwd = 1) +
 tm_shape(hcnparc_ca_sf) +
   tm_polygons(col = "#B22222", border.col = "#B22222") +
 tm_layout(main.title = "Parcels in California Transferred Under the 1862 Morrill Act",
           main.title.size = 0.8)
-
 ```
 
-# 3. Number of parcels and acreage by State
+*For an interactive version of this map, please visit [http://bit.ly/ca-morrill-map](http://bit.ly/ca-morrill-map){target="_blank" rel="noopener"}.*
 
-The majority of land in California transferred from Federal to private ownership under the Morrill Act actually went to benefit public universities in other States. States like New York received a large allotment of land (which was distributed according to population), but 
+# Number of parcels and acreage by State
 
-```{r comp_totals, cache = TRUE, message=FALSE}
+The majority of land transferred in California from Federal public to private ownership under the Morrill Act went to benefit public universities in 26 other states. Only 8.5% of the 1.7m acres ultimately transferred went to support the University of California endowment.
+
+The reason for this is because under the act land was distributed according to the number of Congressional representatives. Hence states like New York with large populations got a large allotment of land. States that didn't have sufficient amounts of Federal public land within their own borders were instead given 'coupons' ([Land scrip](https://en.wikipedia.org/wiki/Scrip#Land_scrip_(United_States)){target="_blank" rel="noopener"}), that could be redeemed anywhere in the US. They were required to sell these coupons on the open market to fund endowments for their nascent land grant universities. California was a popular state for homesteaders and land speculators to redeem their land scrip due to its large holdings of public land, fertile agricultural areas, and rich timber resources.
+
+```{r comp_totals, message = FALSE, eval = TRUE}
+all_acres <- sum(hcnparc_ca_sf$Acres) 
+
 state_totals_tbl <- hcnparc_ca_sf %>% 
   st_drop_geometry() %>% 
   group_by(LG_State) %>% 
-  summarise(Num_Parcels = n(), Total_acres = sum(Acres))
-  
-DT::datatable(state_totals_tbl, 
-          class = 'row-border stripe hover compact', 
-          colnames = c("State", "Number Parcels", "Total Area (acres)"),
-          width = 400,
-          rownames = F, 
-          options = list(autoWidth = TRUE,
-                         paging = FALSE,
-                         searching = FALSE,
-                         info = FALSE)) %>% 
-  formatRound(columns = "Total_acres", digits = 0) 
+  summarise(Num_Parcels = n(), Total_acres = sum(Acres)) %>% 
+  mutate(Percent_total_acreage = 100 * round(Total_acres / all_acres, 3))
+
+DT::datatable(state_totals_tbl,
+              colnames = c("State", "Number Parcels", 
+                           "Total Area (acres)", "Prcnt Total Acres"),
+              extensions = 'Buttons',
+              width = 600,
+              rownames = TRUE, 
+              options = list(paging = FALSE,
+                             searching = FALSE,
+                             info = FALSE,
+                             fixedColumns = TRUE,
+                             autoWidth = TRUE,
+                             ordering = TRUE,
+                             dom = 'tB',
+                             buttons = c('copy', 'csv')
+                            ),
+              class = "display"
+            ) %>% 
+   formatRound(columns = "Total_acres", digits = 0)
+
 ```
 
-```{r plot_by_state, cache = TRUE}
+Acreage by state in descending order:
+
+```{r plot_by_state, cache = TRUE, eval = TRUE}
 ggplot(data = state_totals_tbl, 
        aes(x = Total_acres, y = reorder(LG_State, Total_acres))) + 
   geom_bar(stat="identity") +
@@ -112,7 +137,24 @@ ggplot(data = state_totals_tbl,
   scale_x_continuous(labels = scales::comma)
 ```
 
+<!---
+Percent of Morrill Act acreage in California that went to support the UC endowment:
+
+acres_ca <- state_totals_tbl %>% 
+  filter(LG_State == "CA") %>% 
+  pull(Total_acres) %>% 
+  sum()
+
+acres_notca <- state_totals_tbl %>% 
+  filter(LG_State != "CA") %>% 
+  pull(Total_acres) %>% 
+  sum()
+
+scales::label_percent(accuracy = 0.01)(acres_ca / (acres_ca + acres_notca))
+
+--->
+
+
+<hr/>
+
 *Please email for [questions and feedback](mailto:andlyons@ucanr.edu?subject=Morrill Map).*
-
-\
-
